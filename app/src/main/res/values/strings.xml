@@ -1,3 +1,12 @@
 <resources>
     <string name="app_name">Meow Moments</string>
+    <string name="title_home">Главная</string>
+    <string name="title_calendar">Календарь</string>
+    <string name="title_collection">Коллекция</string>
+    <string name="title_info">Справка</string>
+    <string name="title_settings">Настройки</string>
+    <string name="coming_soon_calendar">Календарь - Скоро!</string>
+    <string name="coming_soon_collection">Коллекция - Скоро!</string>
+    <string name="coming_soon_info">Справка - Скоро!</string>
+    <string name="coming_soon_settings">Настройки - Скоро!</string>
 </resources>
