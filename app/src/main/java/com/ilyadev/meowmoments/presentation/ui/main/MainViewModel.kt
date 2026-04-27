@@ -1,8 +1,8 @@
 package com.ilyadev.meowmoments.presentation.ui.main
 
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ilyadev.meowmoments.data.local.DatabaseInitializer
 import com.ilyadev.meowmoments.domain.model.CatFact
 import com.ilyadev.meowmoments.domain.usecase.GetTodayFactUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,6 +28,7 @@ class MainViewModel @Inject constructor(
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     init {
+        // Загружаем факт при инициализации ViewModel
         loadTodayFact()
     }
 
@@ -50,5 +51,13 @@ class MainViewModel @Inject constructor(
     // Функция для обновления факта (например, по кнопке "ещё один")
     fun refreshFact() {
         loadTodayFact() // Просто перезапускаем загрузку
+    }
+
+    // Новая функция для инициализации базы данных
+    fun initializeDatabase(databaseInitializer: DatabaseInitializer) {
+        viewModelScope.launch {
+            databaseInitializer.initializeDatabase()
+            loadTodayFact() // После инициализации загружаем факт
+        }
     }
 }

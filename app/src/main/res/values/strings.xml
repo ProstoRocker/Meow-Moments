@@ -9,4 +9,8 @@
     <string name="coming_soon_collection">Коллекция - Скоро!</string>
     <string name="coming_soon_info">Справка - Скоро!</string>
     <string name="coming_soon_settings">Настройки - Скоро!</string>
+    <string name="calendar_title">Календарь фактов</string>
+    <string name="no_facts_for_date">Сегодня вы ещё не собрали факты</string>
+    <string name="facts_for_date">Факты за %s</string>
+    <string name="month_year_format">%1$s %2$d</string>
 </resources>
