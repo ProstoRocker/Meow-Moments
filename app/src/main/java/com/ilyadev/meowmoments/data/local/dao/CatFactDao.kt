@@ -18,4 +18,7 @@ interface CatFactDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(facts: List<CatFactEntity>)
+
+    @Query("SELECT COUNT(*) FROM cat_facts")
+    suspend fun getCount(): Int
 }

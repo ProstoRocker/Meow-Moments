@@ -1,11 +1,11 @@
 package com.ilyadev.meowmoments.data.repository
 
-import android.text.format.DateUtils
 import com.ilyadev.meowmoments.data.local.dao.CatFactDao
 import com.ilyadev.meowmoments.data.local.dao.CollectedFactDao
 import com.ilyadev.meowmoments.data.local.entities.CollectedFactEntity
 import com.ilyadev.meowmoments.domain.model.CatFact
 import com.ilyadev.meowmoments.domain.repository.CatFactsRepository
+import com.ilyadev.meowmoments.utill.DateUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
@@ -23,13 +23,13 @@ class CatFactsRepositoryImpl @Inject constructor(
         val collectedFactsToday = collectedFactDao.getFactsForDate(today).first()
         if (collectedFactsToday.isNotEmpty()) {
             // Если факт уже собран сегодня, возвращаем его
-            val factEntity =
-                catFactDao.getFactById(collectedFactsToday.first().factId) ?: return null
+            val factEntity = catFactDao.getFactById(collectedFactsToday.first().factId) ?: return null
             return mapToDomain(factEntity, today)
         }
 
         // Получаем все факты
         val allFacts = catFactDao.getAllFacts().first()
+        if (allFacts.isEmpty()) return null
 
         // Фильтруем факты, которые еще не собраны
         val uncollectedFacts = allFacts.filter { fact ->
@@ -37,20 +37,17 @@ class CatFactsRepositoryImpl @Inject constructor(
         }
 
         // Если есть несобранные факты, выбираем случайный
-        if (uncollectedFacts.isNotEmpty()) {
-            val randomFact = uncollectedFacts.random()
-            // Сохраняем информацию о том, что этот факт собран сегодня
-            collectedFactDao.insert(
-                CollectedFactEntity(
-                    factId = randomFact.id,
-                    dateCollected = today
-                )
-            )
-            return mapToDomain(randomFact, today)
+        val randomFact = if (uncollectedFacts.isNotEmpty()) {
+            uncollectedFacts.random()
+        } else {
+            // Если все факты собраны, выбираем любой случайный
+            allFacts.random()
         }
 
-        // Если все факты собраны, возвращаем null или можно вернуть случайный из уже собранных
-        return null
+        // Сохраняем информацию о том, что этот факт собран сегодня
+        collectedFactDao.insert(CollectedFactEntity(factId = randomFact.id, dateCollected = today))
+
+        return mapToDomain(randomFact, today)
     }
 
     override fun getAllCollectedFacts(): Flow<List<CatFact>> {
@@ -66,10 +63,7 @@ class CatFactsRepositoryImpl @Inject constructor(
         return collectedFactDao.getCollectedCount()
     }
 
-    private fun mapToDomain(
-        entity: com.ilyadev.meowmoments.data.local.entities.CatFactEntity,
-        dateCollected: String
-    ): CatFact {
+    private fun mapToDomain(entity: com.ilyadev.meowmoments.data.local.entities.CatFactEntity, dateCollected: String): CatFact {
         return CatFact(
             id = entity.id,
             text = entity.text,

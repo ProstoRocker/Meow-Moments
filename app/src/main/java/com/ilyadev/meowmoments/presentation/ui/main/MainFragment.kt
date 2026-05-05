@@ -1,6 +1,5 @@
 package com.ilyadev.meowmoments.presentation.ui.main
 
-
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -71,15 +70,21 @@ class MainFragment : Fragment() {
     }
 
     private fun bindFact(fact: CatFact) {
-        binding.tvFactDate.text = "Факт на ${fact.dateReceived}" // TODO: Форматировать дату
+        binding.tvFactDate.text = "Факт на ${fact.dateReceived}"
         binding.tvFactCategory.text = "#${fact.category}"
         binding.tvFactText.text = fact.text
+
+        // Загружаем изображение через Coil
         binding.ivFactImage.load(fact.imageUrl) {
             crossfade(true)
             placeholder(R.drawable.placeholder_cat)
             error(R.drawable.error_cat)
         }
-        // binding.tvCollectionProgress.text = "Факт X из Y собран" // TODO: Получить из репозитория
+
+        // Получаем количество собранных фактов
+        viewModel.getCollectedCount().observe(viewLifecycleOwner) { count ->
+            binding.tvCollectionProgress.text = "Факт $count из ${viewModel.getTotalFactsCount()}"
+        }
     }
 
     override fun onDestroyView() {

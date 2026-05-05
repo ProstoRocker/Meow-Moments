@@ -7,6 +7,6 @@ import androidx.room.PrimaryKey
 data class CatFactEntity(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val text: String,
-    val category: String,
-    val imageUrl: String? = null
+    val category: String = "API", // Все факты из API будут категории "API"
+    val imageUrl: String? = null // URL из Cataas будет здесь
 )

@@ -100,3 +100,10 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") // Добавляем Mockito Kotlin для удобства работы с Kotlin
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0") // Для тестирования Coroutines
 }
+
+// --- НОВАЯ ЧАСТЬ ---
+android.defaultConfig {
+    // ... applicationId, minSdk, targetSdk, versionCode, versionName ...
+    // ... testInstrumentationRunner ...
+    buildConfigField("String", "THE_CAT_API_KEY", "\"${project.findProperty("THE_CAT_API_KEY")}\"")
+}

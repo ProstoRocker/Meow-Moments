@@ -55,7 +55,7 @@
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_fact_date"
-                tools:text="#Интересный" />
+                tools:text="#API" />
 
             <TextView
                 android:id="@+id/tv_fact_text"
@@ -91,7 +91,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/iv_fact_image"
-                tools:text="Факт 23 из 100 собран" />
+                tools:text="Факт 23 из 50 собран" />
 
             <Button
                 android:id="@+id/btn_next_fact"

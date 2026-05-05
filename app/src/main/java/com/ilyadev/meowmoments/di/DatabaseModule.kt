@@ -22,7 +22,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "meow_moments_db"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration() // ВНИМАНИЕ: Это удалит данные при изменении схемы! Для продакшена используй Migration.
             .build()
     }
 
@@ -33,4 +33,8 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideCollectedFactDao(appDatabase: AppDatabase) = appDatabase.collectedFactDao()
+
+    @Provides
+    @Singleton
+    fun provideCatImageDao(appDatabase: AppDatabase) = appDatabase.catImageDao() // <-- НОВОЕ
 }

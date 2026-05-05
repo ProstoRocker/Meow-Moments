@@ -28,7 +28,6 @@ class MainViewModel @Inject constructor(
     val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
 
     init {
-        // Загружаем факт при инициализации ViewModel
         loadTodayFact()
     }
 
