@@ -7,7 +7,7 @@ import javax.inject.Inject
 class GetTodayFactUseCaseImpl @Inject constructor(
     private val repository: CatFactsRepository
 ) : GetTodayFactUseCase {
-    override suspend fun invoke(): CatFact? {
+    override suspend operator fun invoke(): CatFact? {
         return repository.getFactForToday()
     }
 }

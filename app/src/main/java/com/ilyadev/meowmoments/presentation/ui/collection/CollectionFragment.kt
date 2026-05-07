@@ -54,12 +54,14 @@ class CollectionFragment : Fragment() {
                             binding.tvEmpty.visibility = View.GONE
                             binding.tvError.visibility = View.GONE
                         }
+
                         is CollectionUiState.Empty -> {
                             binding.progressBar.visibility = View.GONE
                             binding.rvFacts.visibility = View.GONE
                             binding.tvEmpty.visibility = View.VISIBLE
                             binding.tvError.visibility = View.GONE
                         }
+
                         is CollectionUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
                             binding.rvFacts.visibility = View.VISIBLE
@@ -67,6 +69,7 @@ class CollectionFragment : Fragment() {
                             binding.tvError.visibility = View.GONE
                             factAdapter.submitList(state.facts)
                         }
+
                         is CollectionUiState.Error -> {
                             binding.progressBar.visibility = View.GONE
                             binding.rvFacts.visibility = View.GONE

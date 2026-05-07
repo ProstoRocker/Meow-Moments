@@ -19,6 +19,13 @@ interface CollectedFactDao {
     @Query("SELECT COUNT(*) FROM collected_facts")
     suspend fun getCollectedCount(): Int
 
+    // Новый метод для получения потока количества
+    @Query("SELECT COUNT(*) FROM collected_facts")
+    fun getCollectedCountAsFlow(): Flow<Int>
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun insert(collectedFact: CollectedFactEntity)
+
+    @Query("SELECT * FROM collected_facts WHERE factId = :factId LIMIT 1")
+    suspend fun getCollectedFactByFactId(factId: Long): CollectedFactEntity?
 }

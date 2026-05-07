@@ -2,6 +2,7 @@ package com.ilyadev.meowmoments.data.local
 
 import com.ilyadev.meowmoments.data.local.dao.CatFactDao
 import com.ilyadev.meowmoments.data.remote.api.CatFactsApiService
+import com.ilyadev.meowmoments.data.remote.dto.CatFactsResponse
 import com.ilyadev.meowmoments.util.CataasUtils
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -12,7 +13,7 @@ class DatabaseInitializer(
 ) {
 
     companion object {
-        const val INITIAL_FACTS_COUNT = 50 // Количество фактов для загрузки при инициализации
+        const val INITIAL_FACTS_COUNT = 50
     }
 
     suspend fun initializeDatabase() {
@@ -20,29 +21,29 @@ class DatabaseInitializer(
             // Проверяем, есть ли уже данные в базе
             if (catFactDao.getCount() == 0) {
                 // Загружаем факты из API
-                val catFacts = loadFactsFromApi(INITIAL_FACTS_COUNT)
+                val catFactsResponse = loadFactsFromApi(INITIAL_FACTS_COUNT)
                 // Сохраняем в базу
-                catFactDao.insertAll(catFacts)
-            }
-        }
-    }
-
-    private suspend fun loadFactsFromApi(limit: Int): List<com.ilyadev.meowmoments.data.local.entities.CatFactEntity> {
-        return try {
-            val response = catFactsApiService.getFacts(limit)
-            if (response.isSuccessful && response.body() != null) {
-                response.body()!!.map { dto ->
+                catFactDao.insertAll(catFactsResponse.facts.map { dto ->
                     com.ilyadev.meowmoments.data.local.entities.CatFactEntity(
                         text = dto.fact,
                         imageUrl = CataasUtils.generateCataasUrl(dto.fact)
                     )
-                }
+                })
+            }
+        }
+    }
+
+    private suspend fun loadFactsFromApi(limit: Int): CatFactsResponse {
+        return try {
+            val response = catFactsApiService.getFacts(limit)
+            if (response.isSuccessful && response.body() != null) {
+                response.body()!!
             } else {
-                emptyList()
+                throw Exception("Failed to load facts from API")
             }
         } catch (e: Exception) {
             e.printStackTrace()
-            emptyList()
+            throw e
         }
     }
 }

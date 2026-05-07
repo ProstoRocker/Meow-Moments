@@ -1,5 +1,6 @@
 package com.ilyadev.meowmoments.presentation.ui.calendar
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -33,7 +34,12 @@ class FactListDialogFragment : DialogFragment() {
         dialog?.setCanceledOnTouchOutside(true)
 
         val date = arguments?.getString(ARG_DATE) ?: ""
-        val facts = arguments?.getParcelableArrayList<CatFact>(ARG_FACTS) ?: emptyList()
+        val facts = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            arguments?.getParcelableArrayList(ARG_FACTS, CatFact::class.java)
+        } else {
+            @Suppress("DEPRECATION")
+            arguments?.getParcelableArrayList(ARG_FACTS)
+        } ?: emptyList<CatFact>()
 
         binding.tvDialogTitle.text = getString(R.string.facts_for_date, date)
         binding.btnDismiss.setOnClickListener { dismiss() }

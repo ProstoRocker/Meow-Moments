@@ -16,4 +16,7 @@
     <string name="no_facts_found">Не удалось загрузить факты о котах</string>
     <string name="loading_facts">Загрузка фактов...</string>
     <string name="empty_collection">Вы ещё не собрали ни одного факта</string>
+    <string name="close">Закрыть</string>
+    <string name="previous_month">Предыдущий месяц</string>
+    <string name="next_month">Следующий месяц</string>
 </resources>

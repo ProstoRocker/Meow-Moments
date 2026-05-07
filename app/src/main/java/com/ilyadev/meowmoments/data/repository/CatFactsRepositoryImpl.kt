@@ -3,8 +3,10 @@ package com.ilyadev.meowmoments.data.repository
 import com.ilyadev.meowmoments.data.local.dao.CatFactDao
 import com.ilyadev.meowmoments.data.local.dao.CollectedFactDao
 import com.ilyadev.meowmoments.data.local.entities.CollectedFactEntity
+import com.ilyadev.meowmoments.data.remote.api.CatFactsApiService
 import com.ilyadev.meowmoments.domain.model.CatFact
 import com.ilyadev.meowmoments.domain.repository.CatFactsRepository
+import com.ilyadev.meowmoments.util.CataasUtils
 import com.ilyadev.meowmoments.utill.DateUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
@@ -13,7 +15,8 @@ import javax.inject.Inject
 
 class CatFactsRepositoryImpl @Inject constructor(
     private val catFactDao: CatFactDao,
-    private val collectedFactDao: CollectedFactDao
+    private val collectedFactDao: CollectedFactDao,
+    private val catFactsApiService: CatFactsApiService
 ) : CatFactsRepository {
 
     override suspend fun getFactForToday(): CatFact? {
@@ -23,7 +26,8 @@ class CatFactsRepositoryImpl @Inject constructor(
         val collectedFactsToday = collectedFactDao.getFactsForDate(today).first()
         if (collectedFactsToday.isNotEmpty()) {
             // Если факт уже собран сегодня, возвращаем его
-            val factEntity = catFactDao.getFactById(collectedFactsToday.first().factId) ?: return null
+            val factEntity =
+                catFactDao.getFactById(collectedFactsToday.first().factId) ?: return null
             return mapToDomain(factEntity, today)
         }
 
@@ -33,7 +37,7 @@ class CatFactsRepositoryImpl @Inject constructor(
 
         // Фильтруем факты, которые еще не собраны
         val uncollectedFacts = allFacts.filter { fact ->
-            collectedFactDao.getFactsForDate(fact.id).first().isEmpty()
+            collectedFactDao.getCollectedFactByFactId(fact.id) == null
         }
 
         // Если есть несобранные факты, выбираем случайный
@@ -63,7 +67,53 @@ class CatFactsRepositoryImpl @Inject constructor(
         return collectedFactDao.getCollectedCount()
     }
 
-    private fun mapToDomain(entity: com.ilyadev.meowmoments.data.local.entities.CatFactEntity, dateCollected: String): CatFact {
+    // Реализация нового метода
+    override fun getCollectedCountAsFlow(): Flow<Int> {
+        return collectedFactDao.getCollectedCountAsFlow() // Вызов из DAO
+    }
+
+    // Реализация нового метода
+    override suspend fun getRandomFact(): CatFact? {
+        val allFacts = catFactDao.getAllFacts().first()
+        if (allFacts.isEmpty()) return null
+        val randomEntity = allFacts.random()
+        return mapToDomain(
+            randomEntity,
+            DateUtils.getCurrentDate()
+        ) // Используем текущую дату или можно null, если не нужно
+    }
+
+    /**
+     * Загружает факты из Cat Facts API и преобразует их в локальные сущности
+     * @param limit Количество фактов для загрузки
+     * @return Список локальных сущностей CatFactEntity
+     */
+    suspend fun loadFactsFromApi(limit: Int): List<com.ilyadev.meowmoments.data.local.entities.CatFactEntity> {
+        return try {
+            val response = catFactsApiService.getFacts(limit)
+            if (response.isSuccessful && response.body() != null) {
+                response.body()!!.facts.map { dto ->
+                    com.ilyadev.meowmoments.data.local.entities.CatFactEntity(
+                        text = dto.fact,
+                        imageUrl = CataasUtils.generateCataasUrl(dto.fact)
+                    )
+                }
+            } else {
+                emptyList()
+            }
+        } catch (e: Exception) {
+            e.printStackTrace()
+            emptyList()
+        }
+    }
+
+    private fun mapToDomain(
+        entity: com.ilyadev.meowmoments.data.local.entities.CatFactEntity,
+        dateCollected: String
+    ): CatFact {
+        val imageUrl = entity.imageUrl ?: ""
+        println("Generated image URL: $imageUrl")
+
         return CatFact(
             id = entity.id,
             text = entity.text,

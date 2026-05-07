@@ -33,8 +33,4 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideCollectedFactDao(appDatabase: AppDatabase) = appDatabase.collectedFactDao()
-
-    @Provides
-    @Singleton
-    fun provideCatImageDao(appDatabase: AppDatabase) = appDatabase.catImageDao() // <-- НОВОЕ
 }

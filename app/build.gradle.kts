@@ -36,10 +36,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 
     // УБРАЛИ buildFeatures { compose = true }, так как используем View System
     buildFeatures {
         viewBinding = true // Включаем View Binding
+        buildConfig = true
         // compose = false // Явно указать не обязательно, но для ясности
     }
     packaging {
@@ -55,6 +59,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.appcompat) // Для AppCompatDelegate и базовых виджетов
+    implementation(libs.material) // Добавляем Material Components
     implementation(libs.androidx.constraintlayout) // Для View System Layouts
     implementation(libs.androidx.fragment.ktx) // Для Fragment API
 

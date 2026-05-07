@@ -8,23 +8,20 @@ object CataasUtils {
     /**
      * Генерирует URL для Cataas с текстом факта.
      * @param fact Текст факта, который будет отображаться на изображении
-     * @param size Размер изображения (small, medium, large)
-     * @param color Цвет текста (например, "white", "black", "orange")
      * @return URL изображения кота с текстом
      */
-    fun generateCataasUrl(
-        fact: String,
-        size: String = "medium",
-        color: String = "white"
-    ): String {
-        val encodedFact = URLEncoder.encode(fact, StandardCharsets.UTF_8.name())
-        return "https://cataas.com/cat/says/$encodedFact?size=$size&color=$color"
-    }
+    fun generateCataasUrl(fact: String): String {
+        // 1. Оставляем только буквы, цифры и пробелы (убираем всё остальное)
+        val cleanText = fact
+            .takeIf { it.length <= 35 } ?: fact.substring(0, 35)
+            .replace(Regex("[^a-zA-Z0-9\\s]"), "") // Убираем все спецсимволы
+            .trim()
+            .let { if (it.isEmpty()) "Cat Fact" else it }
 
-    /**
-     * Генерирует URL для случайного изображения кота без текста
-     */
-    fun getRandomCatImageUrl(): String {
-        return "https://cataas.com/cat"
+        // 2. Кодируем только безопасную строку
+        val encoded = URLEncoder.encode(cleanText, StandardCharsets.UTF_8.name())
+
+        // 3. Формируем URL
+        return "https://cataas.com/cat/says/$encoded?size=medium&color=white"
     }
 }
