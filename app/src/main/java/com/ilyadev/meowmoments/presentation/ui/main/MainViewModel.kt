@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ilyadev.meowmoments.data.local.DatabaseInitializer
 import com.ilyadev.meowmoments.domain.model.CatFact
+import com.ilyadev.meowmoments.domain.repository.CatFactsRepository
 import com.ilyadev.meowmoments.domain.usecase.GetTodayFactUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +22,8 @@ sealed interface MainUiState {
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val getTodayFactUseCase: GetTodayFactUseCase
+    private val getTodayFactUseCase: GetTodayFactUseCase,
+    private val repository: CatFactsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<MainUiState>(MainUiState.Loading)
@@ -58,5 +60,21 @@ class MainViewModel @Inject constructor(
             databaseInitializer.initializeDatabase()
             loadTodayFact() // После инициализации загружаем факт
         }
+    }
+
+    // Получение количества собранных фактов
+    fun getCollectedCount(): StateFlow<Int> {
+        val collectedCountFlow = MutableStateFlow(0)
+        viewModelScope.launch {
+            repository.getCollectedCount().let { count ->
+                collectedCountFlow.value = count
+            }
+        }
+        return collectedCountFlow
+    }
+
+    // Общее количество фактов (можно заменить на константу или получить из репозитория)
+    fun getTotalFactsCount(): Int {
+        return 365 // Предполагаемое количество фактов на год
     }
 }

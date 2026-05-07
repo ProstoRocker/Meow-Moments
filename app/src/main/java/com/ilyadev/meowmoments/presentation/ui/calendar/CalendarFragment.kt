@@ -158,8 +158,7 @@ class CalendarFragment : Fragment() {
     }
 
     private fun showFactsForDate(date: LocalDate) {
-        // Здесь можно реализовать отображение фактов за выбранную дату
-        // Например, через DialogFragment или переход на новый фрагмент
+
         val dateStr = date.format(DateTimeFormatter.ISO_LOCAL_DATE)
         val factsForDate = viewModel.uiState.value.let { state ->
             if (state is CalendarUiState.Success) {
@@ -171,8 +170,7 @@ class CalendarFragment : Fragment() {
         }
 
         if (factsForDate.isNotEmpty()) {
-            // Здесь можно показать факты за выбранную дату
-            // Например, через BottomSheetDialogFragment
+
             val dialog = FactListDialogFragment.newInstance(factsForDate, dateStr)
             dialog.show(childFragmentManager, "FactListDialog")
         }

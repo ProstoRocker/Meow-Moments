@@ -53,11 +53,13 @@ class MainFragment : Fragment() {
                             binding.progressBar.visibility = View.VISIBLE
                             binding.contentScrollview.visibility = View.GONE
                         }
+
                         is MainUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
                             binding.contentScrollview.visibility = View.VISIBLE
                             bindFact(state.fact)
                         }
+
                         is MainUiState.Error -> {
                             binding.progressBar.visibility = View.GONE
                             binding.contentScrollview.visibility = View.GONE
@@ -82,8 +84,12 @@ class MainFragment : Fragment() {
         }
 
         // Получаем количество собранных фактов
-        viewModel.getCollectedCount().observe(viewLifecycleOwner) { count ->
-            binding.tvCollectionProgress.text = "Факт $count из ${viewModel.getTotalFactsCount()}"
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.getCollectedCount().collect { count ->
+                    binding.tvCollectionProgress.text = "Факт $count из ${viewModel.getTotalFactsCount()}"
+                }
+            }
         }
     }
 
