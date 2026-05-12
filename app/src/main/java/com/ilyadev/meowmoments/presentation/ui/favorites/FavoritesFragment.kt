@@ -1,4 +1,4 @@
-package com.ilyadev.meowmoments.presentation.ui.collection
+package com.ilyadev.meowmoments.presentation.ui.favorites
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -9,17 +9,16 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.navigation.fragment.findNavController
-import com.ilyadev.meowmoments.databinding.FragmentCollectionBinding
-import com.ilyadev.meowmoments.presentation.ui.collection.CollectionFragmentDirections
+import com.ilyadev.meowmoments.databinding.FragmentFavoritesBinding
+import com.ilyadev.meowmoments.presentation.ui.collection.FactAdapter
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class CollectionFragment : Fragment() {
+class FavoritesFragment : Fragment() {
 
-    private val viewModel: CollectionViewModel by viewModels()
-    private var _binding: FragmentCollectionBinding? = null
+    private val viewModel: FavoritesViewModel by viewModels()
+    private var _binding: FragmentFavoritesBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var factAdapter: FactAdapter
@@ -29,7 +28,7 @@ class CollectionFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentCollectionBinding.inflate(inflater, container, false)
+        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -41,15 +40,8 @@ class CollectionFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        // Передаём лямбду при создании адаптера
-        factAdapter = FactAdapter { clickedFact ->
-            // Создаём action для навигации
-            val action = CollectionFragmentDirections.actionCollectionFragmentToFactDetailFragment(
-                fact = clickedFact // Передаём факт как Parcelable
-            )
-            findNavController().navigate(action)
-        }
-        binding.rvFacts.adapter = factAdapter
+        factAdapter = FactAdapter() // Предполагаем, что FactAdapter может работать с CatFact
+        binding.rvFavorites.adapter = factAdapter
     }
 
     private fun setupObservers() {
@@ -57,31 +49,28 @@ class CollectionFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
-                        is CollectionUiState.Loading -> {
+                        is FavoritesUiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
-                            binding.rvFacts.visibility = View.GONE
+                            binding.rvFavorites.visibility = View.GONE
                             binding.tvEmpty.visibility = View.GONE
                             binding.tvError.visibility = View.GONE
                         }
-
-                        is CollectionUiState.Empty -> {
+                        is FavoritesUiState.Empty -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.rvFacts.visibility = View.GONE
+                            binding.rvFavorites.visibility = View.GONE
                             binding.tvEmpty.visibility = View.VISIBLE
                             binding.tvError.visibility = View.GONE
                         }
-
-                        is CollectionUiState.Success -> {
+                        is FavoritesUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.rvFacts.visibility = View.VISIBLE
+                            binding.rvFavorites.visibility = View.VISIBLE
                             binding.tvEmpty.visibility = View.GONE
                             binding.tvError.visibility = View.GONE
                             factAdapter.submitList(state.facts)
                         }
-
-                        is CollectionUiState.Error -> {
+                        is FavoritesUiState.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.rvFacts.visibility = View.GONE
+                            binding.rvFavorites.visibility = View.GONE
                             binding.tvEmpty.visibility = View.GONE
                             binding.tvError.visibility = View.VISIBLE
                             binding.tvError.text = state.message

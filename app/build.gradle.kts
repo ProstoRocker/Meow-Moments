@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt) // Добавляем плагин Hilt
     alias(libs.plugins.kotlin.parcelize) // Для Parcelable
     alias(libs.plugins.kotlin.kapt) // Для kapt (Room, Hilt)
+    alias(libs.plugins.navigation.safeargs)
 }
 
 android {
@@ -107,7 +108,7 @@ dependencies {
 }
 
 // --- НОВАЯ ЧАСТЬ ---
-android.defaultConfig {
+    android.defaultConfig {
     // ... applicationId, minSdk, targetSdk, versionCode, versionName ...
     // ... testInstrumentationRunner ...
     buildConfigField("String", "THE_CAT_API_KEY", "\"${project.findProperty("THE_CAT_API_KEY")}\"")

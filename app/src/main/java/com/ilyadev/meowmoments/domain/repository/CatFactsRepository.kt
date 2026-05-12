@@ -30,4 +30,8 @@ interface CatFactsRepository {
      * Может использоваться для кнопки "Ещё один факт".
      */
     suspend fun getRandomFact(): CatFact?
+
+    // --- НОВЫЕ МЕТОДЫ ---
+    fun getFavoriteFacts(): Flow<List<CatFact>>
+    suspend fun updateFavoriteStatus(factId: Long, isFavorite: Boolean)
 }

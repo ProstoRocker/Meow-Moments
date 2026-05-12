@@ -19,4 +19,6 @@
     <string name="close">Закрыть</string>
     <string name="previous_month">Предыдущий месяц</string>
     <string name="next_month">Следующий месяц</string>
+    <string name="title_favorites">Избранное</string>
+    <string name="empty_favorites">Вы ещё не добавили ни одного факта в избранное</string>
 </resources>

@@ -8,7 +8,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ilyadev.meowmoments.databinding.ItemFactBinding
 import com.ilyadev.meowmoments.domain.model.CatFact
 
-class FactAdapter : ListAdapter<CatFact, FactAdapter.FactViewHolder>(FactDiffCallback) {
+class FactAdapter(
+    private val onItemClick: (CatFact) -> Unit // NEW: Lambda для обработки клика
+) : ListAdapter<CatFact, FactAdapter.FactViewHolder>(FactDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactViewHolder {
         val binding = ItemFactBinding.inflate(
@@ -21,12 +23,17 @@ class FactAdapter : ListAdapter<CatFact, FactAdapter.FactViewHolder>(FactDiffCal
         holder.bind(getItem(position))
     }
 
-    class FactViewHolder(private val binding: ItemFactBinding) :
+    inner class FactViewHolder(private val binding: ItemFactBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(fact: CatFact) {
             binding.tvFactText.text = fact.text
             binding.tvFactCategory.text = "#${fact.category}"
+
+            // NEW: Устанавливаем onClickListener
+            binding.root.setOnClickListener {
+                onItemClick(fact) // Вызываем лямбду при клике
+            }
         }
     }
 

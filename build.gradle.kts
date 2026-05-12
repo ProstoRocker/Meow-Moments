@@ -5,4 +5,5 @@ plugins {
     alias(libs.plugins.hilt) apply false // Добавляем плагин Hilt
     alias(libs.plugins.kotlin.parcelize) apply false // Может понадобиться для моделей данных
     alias(libs.plugins.kotlin.kapt) apply false // Для Room Compiler и Hilt Annotation Processor
+    alias(libs.plugins.navigation.safeargs) apply false
 }

@@ -11,9 +11,8 @@ import com.ilyadev.meowmoments.utill.DateUtils
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
-class CatFactsRepositoryImpl @Inject constructor(
+class CatFactsRepositoryImpl(
     private val catFactDao: CatFactDao,
     private val collectedFactDao: CollectedFactDao,
     private val catFactsApiService: CatFactsApiService
@@ -83,6 +82,21 @@ class CatFactsRepositoryImpl @Inject constructor(
         ) // Используем текущую дату или можно null, если не нужно
     }
 
+    // --- НОВАЯ РЕАЛИЗАЦИЯ ---
+    override fun getFavoriteFacts(): Flow<List<CatFact>> {
+        return catFactDao.getFavoriteFacts().map { entities ->
+            entities.map { entity ->
+                // Используем mapToDomainFavorite, чтобы передать статус isFavorite
+                mapToDomainFavorite(entity)
+            }
+        }
+    }
+
+    // --- НОВАЯ РЕАЛИЗАЦИЯ ---
+    override suspend fun updateFavoriteStatus(factId: Long, isFavorite: Boolean) {
+        catFactDao.updateFavoriteStatus(factId, isFavorite)
+    }
+
     /**
      * Загружает факты из Cat Facts API и преобразует их в локальные сущности
      * @param limit Количество фактов для загрузки
@@ -120,6 +134,24 @@ class CatFactsRepositoryImpl @Inject constructor(
             category = entity.category,
             imageUrl = entity.imageUrl,
             dateReceived = dateCollected
+        )
+    }
+
+    // --- НОВЫЙ МЕТОД ---
+    /**
+     * Конвертирует CatFactEntity в доменную модель CatFact для экрана Избранное.
+     * Передаёт статус isFavorite.
+     */
+    private fun mapToDomainFavorite(
+        entity: com.ilyadev.meowmoments.data.local.entities.CatFactEntity
+    ): CatFact {
+        return CatFact(
+            id = entity.id,
+            text = entity.text,
+            category = entity.category,
+            imageUrl = entity.imageUrl,
+            dateReceived = DateUtils.getCurrentDate(), // Или можно использовать дату добавления в избранное, если будете хранить
+            isFavorite = entity.isFavorite // Передаём статус избранного
         )
     }
 }
