@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.hilt) // Добавляем плагин Hilt
     alias(libs.plugins.kotlin.parcelize) // Для Parcelable
     alias(libs.plugins.kotlin.kapt) // Для kapt (Room, Hilt)
+    alias(libs.plugins.navigation.safeargs)
 }
 
 android {
@@ -36,10 +37,14 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = "11"
+    }
 
     // УБРАЛИ buildFeatures { compose = true }, так как используем View System
     buildFeatures {
         viewBinding = true // Включаем View Binding
+        buildConfig = true
         // compose = false // Явно указать не обязательно, но для ясности
     }
     packaging {
@@ -55,6 +60,7 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.appcompat) // Для AppCompatDelegate и базовых виджетов
+    implementation(libs.material) // Добавляем Material Components
     implementation(libs.androidx.constraintlayout) // Для View System Layouts
     implementation(libs.androidx.fragment.ktx) // Для Fragment API
 
@@ -99,4 +105,11 @@ dependencies {
     testImplementation("org.mockito:mockito-core:5.14.2") // Добавляем Mockito Core
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") // Добавляем Mockito Kotlin для удобства работы с Kotlin
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0") // Для тестирования Coroutines
+}
+
+// --- НОВАЯ ЧАСТЬ ---
+    android.defaultConfig {
+    // ... applicationId, minSdk, targetSdk, versionCode, versionName ...
+    // ... testInstrumentationRunner ...
+    buildConfigField("String", "THE_CAT_API_KEY", "\"${project.findProperty("THE_CAT_API_KEY")}\"")
 }

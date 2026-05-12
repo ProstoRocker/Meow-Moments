@@ -7,7 +7,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -35,9 +35,10 @@ class CalendarViewModel @Inject constructor(
 
             try {
                 // Получаем список собранных дат
-                val collectedDates = repository.getAllCollectedFacts().collectLatest { facts ->
-                    facts.map { it.dateReceived }
-                }.distinct()
+                val collectedDates = repository.getAllCollectedFacts()
+                    .first()
+                    .map { it.dateReceived }
+                    .distinct()
 
                 _uiState.value = CalendarUiState.Success(
                     currentMonth = currentMonth,
@@ -65,9 +66,10 @@ class CalendarViewModel @Inject constructor(
             _uiState.value = CalendarUiState.Loading
 
             try {
-                val collectedDates = repository.getAllCollectedFacts().collectLatest { facts ->
-                    facts.map { it.dateReceived }
-                }.distinct()
+                val collectedDates = repository.getAllCollectedFacts()
+                    .first()
+                    .map { it.dateReceived }
+                    .distinct()
 
                 _uiState.value = CalendarUiState.Success(
                     currentMonth = currentMonth,

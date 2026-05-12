@@ -8,8 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.databinding.ItemCalendarDayBinding
 import java.time.LocalDate
-import java.time.YearMonth
-import java.time.format.DateTimeFormatter
 
 class CalendarDayAdapter(
     private val onDayClick: (LocalDate) -> Unit
@@ -41,10 +39,12 @@ class CalendarDayAdapter(
                         binding.root.setBackgroundResource(R.drawable.calendar_today_background)
                         binding.tvDay.setTextColor(itemView.context.getColor(R.color.calendar_today_text))
                     }
+
                     item.isCollected -> {
                         binding.root.setBackgroundResource(R.drawable.calendar_collected_day_background)
                         binding.tvDay.setTextColor(itemView.context.getColor(R.color.calendar_collected_day_text))
                     }
+
                     else -> {
                         binding.root.setBackgroundColor(itemView.context.getColor(R.color.calendar_day_background))
                         binding.tvDay.setTextColor(itemView.context.getColor(R.color.calendar_day_text))
@@ -62,7 +62,10 @@ class CalendarDayAdapter(
             return oldItem.date == newItem.date
         }
 
-        override fun areContentsTheSame(oldItem: CalendarDayItem, newItem: CalendarDayItem): Boolean {
+        override fun areContentsTheSame(
+            oldItem: CalendarDayItem,
+            newItem: CalendarDayItem
+        ): Boolean {
             return oldItem == newItem
         }
     }

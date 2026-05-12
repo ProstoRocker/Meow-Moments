@@ -3,7 +3,7 @@ package com.ilyadev.meowmoments.presentation
 import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ilyadev.meowmoments.R
@@ -28,7 +28,9 @@ class MainActivity : AppCompatActivity() {
         initializeDatabase()
 
         val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        val navController = findNavController(R.id.nav_host_fragment_activity_main)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navController = navHostFragment.navController
         navView.setupWithNavController(navController)
     }
 

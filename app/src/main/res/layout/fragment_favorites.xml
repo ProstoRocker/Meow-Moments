@@ -21,7 +21,7 @@
         android:id="@+id/tv_empty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/empty_collection"
+        android:text="@string/empty_favorites"
         android:visibility="gone"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -40,7 +40,7 @@
         app:layout_constraintEnd_toEndOf="parent"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_facts"
+        android:id="@+id/rv_favorites"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"

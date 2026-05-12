@@ -22,7 +22,7 @@ object DatabaseModule {
             AppDatabase::class.java,
             "meow_moments_db"
         )
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration() // ВНИМАНИЕ: Это удалит данные при изменении схемы! Для продакшена используй Migration.
             .build()
     }
 
