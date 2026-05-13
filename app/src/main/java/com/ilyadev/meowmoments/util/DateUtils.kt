@@ -1,4 +1,4 @@
-package com.ilyadev.meowmoments.utill
+package com.ilyadev.meowmoments.util
 
 import java.text.SimpleDateFormat
 import java.util.Date

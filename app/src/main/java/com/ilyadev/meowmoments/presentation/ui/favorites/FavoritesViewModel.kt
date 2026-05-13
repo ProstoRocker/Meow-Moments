@@ -8,7 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -28,12 +28,14 @@ class FavoritesViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = FavoritesUiState.Loading
             try {
-                repository.getFavoriteFacts().collectLatest { facts ->
+                // Просто запускаем Flow, но не используем collectLatest для обновления UI
+                repository.getFavoriteFacts().collect { facts ->
                     _uiState.value = if (facts.isEmpty()) {
                         FavoritesUiState.Empty
                     } else {
                         FavoritesUiState.Success(facts)
                     }
+                    // Опять же, для вручную управляемого списка, collectLatest не нужен
                 }
             } catch (e: Exception) {
                 _uiState.value = FavoritesUiState.Error("Ошибка загрузки избранного: ${e.message}")
@@ -41,13 +43,39 @@ class FavoritesViewModel @Inject constructor(
         }
     }
 
+    // --- ОБНОВЛЁННЫЙ МЕТОД ---
     fun toggleFavorite(factId: Long, isCurrentlyFavorite: Boolean) {
         viewModelScope.launch {
             try {
+                // 1. Обновить статус в базе данных
                 repository.updateFavoriteStatus(factId, !isCurrentlyFavorite)
-                // Состояние обновится автоматически через collectLatest в loadFavoriteFacts
+
+                // 2. Найти текущий список и обновить конкретный элемент
+                _uiState.update { currentState ->
+                    when (currentState) {
+                        is FavoritesUiState.Success -> {
+                            val updatedList = currentState.facts.map { fact ->
+                                if (fact.id == factId) {
+                                    fact.copy(isFavorite = !isCurrentlyFavorite)
+                                } else {
+                                    fact
+                                }
+                            }
+                            // Опционально: если после удаления из избранного список стал пустым,
+                            // можно переключиться на Empty состояние.
+                            if (updatedList.isEmpty()) {
+                                FavoritesUiState.Empty
+                            } else {
+                                FavoritesUiState.Success(updatedList)
+                            }
+                        }
+                        // Если состояние не Success, ничего не меняем
+                        is FavoritesUiState.Loading,
+                        is FavoritesUiState.Empty,
+                        is FavoritesUiState.Error -> currentState
+                    }
+                }
             } catch (e: Exception) {
-                // Логирование ошибки
                 e.printStackTrace()
             }
         }

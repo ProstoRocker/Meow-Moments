@@ -17,18 +17,13 @@
         android:title="@string/title_collection" />
 
     <item
-        android:id="@+id/infoFragment"
-        android:icon="@drawable/ic_info"
-        android:title="@string/title_info" />
+        android:id="@+id/favoritesFragment"
+        android:icon="@drawable/ic_star"
+        android:title="@string/title_favorites" />
 
     <item
         android:id="@+id/settingsFragment"
         android:icon="@drawable/ic_settings"
         android:title="@string/title_settings" />
-
-    <item
-        android:id="@+id/favoritesFragment"
-        android:icon="@drawable/ic_star"
-        android:title="@string/title_favorites" />
 
 </menu>

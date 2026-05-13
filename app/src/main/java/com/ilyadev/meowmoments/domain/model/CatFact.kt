@@ -17,5 +17,6 @@ data class CatFact(
     val text: String,
     val category: String,
     val imageUrl: String?,
-    val dateReceived: String
+    val dateReceived: String,
+    val isFavorite: Boolean = false
 ) : Parcelable
