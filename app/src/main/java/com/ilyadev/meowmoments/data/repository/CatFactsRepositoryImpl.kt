@@ -81,7 +81,7 @@ class CatFactsRepositoryImpl @Inject constructor(
         )
     }
 
-    // --- Добавлены методы для избранного ---
+    // --- Методы для избранного ---
     override fun getFavoriteFacts(): Flow<List<CatFact>> {
         return catFactDao.getFavoriteFacts().map { entities ->
             entities.map { entity ->
@@ -92,6 +92,19 @@ class CatFactsRepositoryImpl @Inject constructor(
 
     override suspend fun updateFavoriteStatus(factId: Long, isFavorite: Boolean) {
         catFactDao.updateFavoriteStatus(factId, isFavorite)
+    }
+
+    // --- НОВЫЕ МЕТОДЫ ДЛЯ ПОСЛЕДНИХ ПРОСМОТРЕННЫХ ---
+    override suspend fun updateLastViewedTimestamp(factId: Long, timestamp: Long) {
+        catFactDao.updateLastViewedTimestamp(factId, timestamp)
+    }
+
+    override fun getRecentlyViewedFacts(): Flow<List<CatFact>> {
+        return catFactDao.getRecentlyViewedFacts().map { entities ->
+            entities.map { entity ->
+                mapToDomain(entity, DateUtils.getCurrentDate())
+            }
+        }
     }
 
     /**

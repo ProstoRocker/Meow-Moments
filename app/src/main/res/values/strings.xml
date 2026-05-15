@@ -21,4 +21,6 @@
     <string name="next_month">Следующий месяц</string>
     <string name="title_favorites">Избранное</string>
     <string name="empty_favorites">Вы ещё не добавили ни одного факта в избранное</string>
+    <string name="no_recently_viewed">Нет недавно просмотренных фактов</string>
+    <string name="title_my_facts">Мои факты</string>
 </resources>

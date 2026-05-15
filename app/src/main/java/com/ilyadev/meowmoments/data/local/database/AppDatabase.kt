@@ -9,7 +9,7 @@ import com.ilyadev.meowmoments.data.local.entities.CollectedFactEntity
 
 @Database(
     entities = [CatFactEntity::class, CollectedFactEntity::class],
-    version = 2,
+    version = 3, // Увеличено с 2 до 3 из-за добавления lastViewedTimestamp в CatFactEntity
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

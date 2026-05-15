@@ -22,13 +22,20 @@ interface CatFactDao {
     @Query("SELECT COUNT(*) FROM cat_facts")
     suspend fun getCount(): Int
 
-    // --- НОВЫЕ МЕТОДЫ ---
-
-    // Получить все избранные факты
-    @Query("SELECT * FROM cat_facts WHERE isFavorite = 1 ORDER BY id DESC") // Сортировка по новизне (опционально)
+    // --- СТАРЫЕ МЕТОДЫ ДЛЯ ИЗБРАННОГО ---
+    @Query("SELECT * FROM cat_facts WHERE isFavorite = 1 ORDER BY id DESC")
     fun getFavoriteFacts(): Flow<List<CatFactEntity>>
 
-    // Обновить статус избранного для конкретного факта
     @Query("UPDATE cat_facts SET isFavorite = :isFavorite WHERE id = :id")
     suspend fun updateFavoriteStatus(id: Long, isFavorite: Boolean)
+
+    // --- НОВЫЕ МЕТОДЫ ДЛЯ ПОСЛЕДНИХ ПРОСМОТРЕННЫХ ---
+    @Query("UPDATE cat_facts SET lastViewedTimestamp = :timestamp WHERE id = :id")
+    suspend fun updateLastViewedTimestamp(id: Long, timestamp: Long)
+
+    @Query("SELECT * FROM cat_facts WHERE lastViewedTimestamp IS NOT NULL ORDER BY lastViewedTimestamp DESC")
+    fun getRecentlyViewedFacts(): Flow<List<CatFactEntity>>
+
+    @Query("SELECT * FROM cat_facts WHERE lastViewedTimestamp IS NOT NULL ORDER BY lastViewedTimestamp DESC LIMIT :limit")
+    suspend fun getRecentlyViewedFactsLimit(limit: Int): List<CatFactEntity>
 }

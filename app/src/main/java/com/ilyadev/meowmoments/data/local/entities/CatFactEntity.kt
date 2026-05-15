@@ -9,5 +9,6 @@ data class CatFactEntity(
     val text: String,
     val category: String = "API", // Все факты из API будут категории "API"
     val imageUrl: String? = null, // URL из Cataas будет здесь
-    val isFavorite: Boolean = false
+    val isFavorite: Boolean = false,
+    val lastViewedTimestamp: Long? = null
 )

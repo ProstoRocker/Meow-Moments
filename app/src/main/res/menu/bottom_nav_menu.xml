@@ -11,15 +11,11 @@
         android:icon="@drawable/ic_calendar"
         android:title="@string/title_calendar" />
 
+    <!-- Заменяем collectionFragment на myFactsFragment -->
     <item
-        android:id="@+id/collectionFragment"
+        android:id="@+id/myFactsFragment"
         android:icon="@drawable/ic_collection"
-        android:title="@string/title_collection" />
-
-    <item
-        android:id="@+id/favoritesFragment"
-        android:icon="@drawable/ic_star"
-        android:title="@string/title_favorites" />
+        android:title="@string/title_my_facts" />
 
     <item
         android:id="@+id/settingsFragment"

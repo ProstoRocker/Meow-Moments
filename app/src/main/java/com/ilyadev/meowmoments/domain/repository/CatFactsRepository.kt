@@ -31,7 +31,11 @@ interface CatFactsRepository {
      */
     suspend fun getRandomFact(): CatFact?
 
-    // --- НОВЫЕ МЕТОДЫ ---
+    // --- МЕТОДЫ ДЛЯ ИЗБРАННОГО ---
     fun getFavoriteFacts(): Flow<List<CatFact>>
     suspend fun updateFavoriteStatus(factId: Long, isFavorite: Boolean)
+
+    // --- МЕТОДЫ ДЛЯ ПОСЛЕДНИХ ПРОСМОТРЕННЫХ ---
+    suspend fun updateLastViewedTimestamp(factId: Long, timestamp: Long)
+    fun getRecentlyViewedFacts(): Flow<List<CatFact>>
 }

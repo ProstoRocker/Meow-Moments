@@ -1,4 +1,4 @@
-package com.ilyadev.meowmoments.presentation.ui.favorites
+package com.ilyadev.meowmoments.presentation.ui.recentlyviewed
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -10,17 +10,19 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.ilyadev.meowmoments.databinding.FragmentFavoritesBinding
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.ilyadev.meowmoments.R
+import com.ilyadev.meowmoments.databinding.FragmentRecentlyViewedBinding
 import com.ilyadev.meowmoments.presentation.ui.collection.FactAdapter
 import com.ilyadev.meowmoments.presentation.ui.my_facts.MyFactsFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class FavoritesFragment : Fragment() {
+class RecentlyViewedFragment : Fragment() {
 
-    private val viewModel: FavoritesViewModel by viewModels()
-    private var _binding: FragmentFavoritesBinding? = null
+    private val viewModel: RecentlyViewedViewModel by viewModels()
+    private var _binding: FragmentRecentlyViewedBinding? = null
     private val binding get() = _binding!!
 
     private lateinit var factAdapter: FactAdapter
@@ -30,7 +32,7 @@ class FavoritesFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentFavoritesBinding.inflate(inflater, container, false)
+        _binding = FragmentRecentlyViewedBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -42,21 +44,21 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        // --- Передаём обработчики кликов в адаптер ---
+        // Используем тот же адаптер, что и в CollectionFragment
         factAdapter = FactAdapter(
             onFactClick = { clickedFact ->
                 // Навигация к экрану детализации
                 val action = MyFactsFragmentDirections.actionMyFactsFragmentToFactDetailFragment(
-                    fact = clickedFact // Передаём факт как аргумент
+                    fact = clickedFact
                 )
                 findNavController().navigate(action)
             },
             onFavoriteClick = { fact ->
-                // Переключаем статус избранного через ViewModel
-                viewModel.toggleFavorite(fact.id, fact.isFavorite)
+                // Можно добавить переключение избранного, если нужно
+                // viewModel.toggleFavorite(fact.id, fact.isFavorite)
             }
         )
-        binding.rvFavorites.adapter = factAdapter
+        binding.rvRecentlyViewed.adapter = factAdapter
     }
 
     private fun setupObservers() {
@@ -64,31 +66,31 @@ class FavoritesFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
-                        is FavoritesUiState.Loading -> {
+                        is RecentlyViewedUiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
-                            binding.rvFavorites.visibility = View.GONE
+                            binding.rvRecentlyViewed.visibility = View.GONE
                             binding.tvEmpty.visibility = View.GONE
                             binding.tvError.visibility = View.GONE
                         }
 
-                        is FavoritesUiState.Empty -> {
+                        is RecentlyViewedUiState.Empty -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.rvFavorites.visibility = View.GONE
+                            binding.rvRecentlyViewed.visibility = View.GONE
                             binding.tvEmpty.visibility = View.VISIBLE
                             binding.tvError.visibility = View.GONE
                         }
 
-                        is FavoritesUiState.Success -> {
+                        is RecentlyViewedUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.rvFavorites.visibility = View.VISIBLE
+                            binding.rvRecentlyViewed.visibility = View.VISIBLE
                             binding.tvEmpty.visibility = View.GONE
                             binding.tvError.visibility = View.GONE
                             factAdapter.submitList(state.facts)
                         }
 
-                        is FavoritesUiState.Error -> {
+                        is RecentlyViewedUiState.Error -> {
                             binding.progressBar.visibility = View.GONE
-                            binding.rvFavorites.visibility = View.GONE
+                            binding.rvRecentlyViewed.visibility = View.GONE
                             binding.tvEmpty.visibility = View.GONE
                             binding.tvError.visibility = View.VISIBLE
                             binding.tvError.text = state.message

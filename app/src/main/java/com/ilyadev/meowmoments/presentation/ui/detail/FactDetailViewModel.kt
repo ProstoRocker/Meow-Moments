@@ -46,4 +46,16 @@ class FactDetailViewModel @Inject constructor(
             }
         }
     }
+
+    // --- НОВЫЙ МЕТОД ---
+    fun markAsViewed(factId: Long) {
+        viewModelScope.launch {
+            try {
+                repository.updateLastViewedTimestamp(factId, System.currentTimeMillis())
+            } catch (e: Exception) {
+                e.printStackTrace()
+                // Можно добавить логирование ошибки или обновление UI, если нужно
+            }
+        }
+    }
 }
