@@ -63,7 +63,7 @@ class CalendarFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
-                        is CalendarUiState.Loading -> {
+                        CalendarUiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
                             binding.contentLayout.visibility = View.GONE
                             binding.rvCalendarDays.visibility = View.GONE

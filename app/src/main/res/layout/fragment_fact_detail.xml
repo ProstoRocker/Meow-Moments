@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp">
@@ -26,11 +27,12 @@
             android:layout_width="0dp"
             android:layout_height="250dp"
             android:scaleType="centerCrop"
+            android:src="@drawable/placeholder_cat"
+            app:layout_constraintDimensionRatio="1:1"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btn_back"
-            app:layout_constraintDimensionRatio="1:1"
-            tools:src="@tools:sample/avatars" />
+            tools:ignore="ContentDescription" />
 
         <!-- Дата и категория -->
         <TextView
@@ -41,7 +43,7 @@
             android:textAppearance="?attr/textAppearanceLabelMedium"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/iv_fact_image"
-            tools:text="Факт на 2026-05-07" />
+            tools:text="Факт на 2026-05-13" />
 
         <TextView
             android:id="@+id/tv_fact_category"
@@ -72,6 +74,7 @@
             tools:text="Кошки спят в среднем 12-16 часов в сутки." />
 
         <!-- Кнопки действий -->
+        <!-- ВАЖНО: расположены ПОД текстом -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_favorite"
             android:layout_width="wrap_content"
@@ -80,7 +83,8 @@
             android:text="В избранное"
             app:icon="@drawable/ic_star_outline"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/tv_fact_text" />
+            app:layout_constraintTop_toBottomOf="@id/tv_fact_text"
+            tools:visibility="visible" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btn_share"
@@ -89,7 +93,8 @@
             android:text="Поделиться"
             app:icon="@drawable/ic_share"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="@id/btn_favorite" />
+            app:layout_constraintTop_toTopOf="@id/btn_favorite"
+            tools:visibility="visible" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

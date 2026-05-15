@@ -11,7 +11,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ilyadev.meowmoments.databinding.FragmentCollectionBinding
-import com.ilyadev.meowmoments.presentation.ui.collection.CollectionFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -41,14 +40,17 @@ class CollectionFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        // Передаём лямбду при создании адаптера
-        factAdapter = FactAdapter { clickedFact ->
-            // Создаём action для навигации
-            val action = CollectionFragmentDirections.actionCollectionFragmentToFactDetailFragment(
-                fact = clickedFact // Передаём факт как Parcelable
-            )
-            findNavController().navigate(action)
-        }
+        factAdapter = FactAdapter(
+            onFactClick = { clickedFact ->
+                val action = CollectionFragmentDirections.actionCollectionFragmentToFactDetailFragment(
+                    fact = clickedFact
+                )
+                findNavController().navigate(action)
+            },
+            onFavoriteClick = { fact ->
+                viewModel.toggleFavorite(fact.id, fact.isFavorite)
+            }
+        )
         binding.rvFacts.adapter = factAdapter
     }
 
@@ -57,6 +59,7 @@ class CollectionFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
+                        // --- Добавлен `is` для Loading ---
                         is CollectionUiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
                             binding.rvFacts.visibility = View.GONE

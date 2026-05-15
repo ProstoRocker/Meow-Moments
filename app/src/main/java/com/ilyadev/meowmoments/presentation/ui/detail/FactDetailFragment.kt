@@ -2,6 +2,7 @@ package com.ilyadev.meowmoments.presentation.ui.detail
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -48,11 +49,16 @@ class FactDetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
+                    Log.d("FactDetailFragment", "Received state: $state")
+
+                    // --- ИСПРАВЛЕНО: Используем is для обоих состояний ---
                     when (state) {
                         is FactDetailUiState.Loading -> {
+                            Log.d("FactDetailFragment", "State: Loading")
                             // Можно показать ProgressBar, если нужно
                         }
                         is FactDetailUiState.Success -> {
+                            Log.d("FactDetailFragment", "State: Success, binding fact")
                             bindFact(state.fact)
                         }
                     }
@@ -62,6 +68,8 @@ class FactDetailFragment : Fragment() {
     }
 
     private fun bindFact(fact: CatFact) {
+        Log.d("FactDetailFragment", "Binding fact: ${fact.text.substring(0, 20)}...")
+
         binding.tvFactDate.text = "Факт от ${fact.dateReceived}"
         binding.tvFactCategory.text = "#${fact.category}"
         binding.tvFactText.text = fact.text
@@ -73,11 +81,15 @@ class FactDetailFragment : Fragment() {
             error(R.drawable.error_cat)
         }
 
-        // --- ОБНОВЛЕНИЕ КНОПКИ ИЗБРАННОГО ---
+        // --- Обновлено определение иконок ---
         binding.btnFavorite.setIconResource(
             if (fact.isFavorite) R.drawable.ic_star_filled else R.drawable.ic_star_outline
         )
         binding.btnFavorite.text = if (fact.isFavorite) "Удалить из избранного" else "В избранное"
+
+        // Убедимся, что кнопки видимы
+        binding.btnFavorite.visibility = View.VISIBLE
+        binding.btnShare.visibility = View.VISIBLE
     }
 
     private fun setupClickListeners() {
@@ -86,11 +98,12 @@ class FactDetailFragment : Fragment() {
         }
 
         binding.btnFavorite.setOnClickListener {
-            viewModel.toggleFavorite() // Вызываем метод в VM
+            Log.d("FactDetailFragment", "Favorite button clicked")
+            viewModel.toggleFavorite()
         }
 
         binding.btnShare.setOnClickListener {
-            // Получаем текущий текст факта из состояния ViewModel
+            Log.d("FactDetailFragment", "Share button clicked")
             val currentFactText = (viewModel.uiState.value as? FactDetailUiState.Success)?.fact?.text ?: ""
             shareFact(currentFactText)
         }

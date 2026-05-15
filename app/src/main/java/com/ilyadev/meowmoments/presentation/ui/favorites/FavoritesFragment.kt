@@ -9,6 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
 import com.ilyadev.meowmoments.databinding.FragmentFavoritesBinding
 import com.ilyadev.meowmoments.presentation.ui.collection.FactAdapter
 import dagger.hilt.android.AndroidEntryPoint
@@ -40,7 +41,20 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun setupRecyclerView() {
-        factAdapter = FactAdapter() // Предполагаем, что FactAdapter может работать с CatFact
+        // --- Передаём обработчики кликов в адаптер ---
+        factAdapter = FactAdapter(
+            onFactClick = { clickedFact ->
+                // Навигация к экрану детализации
+                val action = FavoritesFragmentDirections.actionFavoritesFragmentToFactDetailFragment(
+                    fact = clickedFact // Передаём факт как аргумент
+                )
+                findNavController().navigate(action)
+            },
+            onFavoriteClick = { fact ->
+                // Переключаем статус избранного через ViewModel
+                viewModel.toggleFavorite(fact.id, fact.isFavorite)
+            }
+        )
         binding.rvFavorites.adapter = factAdapter
     }
 

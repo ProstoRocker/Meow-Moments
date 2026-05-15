@@ -9,7 +9,7 @@ import com.ilyadev.meowmoments.data.local.entities.CollectedFactEntity
 
 @Database(
     entities = [CatFactEntity::class, CollectedFactEntity::class],
-    version = 1,
+    version = 2,
     exportSchema = false
 )
 abstract class AppDatabase : RoomDatabase() {

@@ -11,9 +11,14 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+sealed interface FactDetailUiState {
+    object Loading : FactDetailUiState
+    data class Success(val fact: CatFact) : FactDetailUiState
+}
+
 @HiltViewModel
 class FactDetailViewModel @Inject constructor(
-    private val repository: CatFactsRepository // <-- Добавляем репозиторий
+    private val repository: CatFactsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<FactDetailUiState>(FactDetailUiState.Loading)
@@ -28,7 +33,7 @@ class FactDetailViewModel @Inject constructor(
             val currentState = _uiState.value
             if (currentState is FactDetailUiState.Success) {
                 val fact = currentState.fact
-                val newIsFavorite = !fact.isFavorite // Инвертируем статус
+                val newIsFavorite = !fact.isFavorite
                 try {
                     repository.updateFavoriteStatus(fact.id, newIsFavorite)
                     // Обновляем состояние UI
@@ -36,7 +41,6 @@ class FactDetailViewModel @Inject constructor(
                         fact.copy(isFavorite = newIsFavorite)
                     )
                 } catch (e: Exception) {
-                    // Логирование ошибки
                     e.printStackTrace()
                 }
             }
