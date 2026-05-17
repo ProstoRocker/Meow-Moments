@@ -1,5 +1,5 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Основная тема приложения -->
+    <!-- Темная тема (автоматически применяется в ночное время) -->
     <style name="Theme.MeowMoments" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Цвета Material You (если Android 12+) -->
         <item name="colorPrimary">@color/md_theme_primary</item>

@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -88,10 +89,12 @@ class SettingsFragment : Fragment() {
     private fun setupClickListeners() {
         binding.switchUseSystemTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setUseSystemTheme(isChecked)
+            applyTheme(isChecked, viewModel.darkThemeEnabled.value)
         }
 
         binding.switchDarkTheme.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setDarkThemeEnabled(isChecked)
+            applyTheme(viewModel.useSystemTheme.value, isChecked)
         }
 
         binding.switchDailyNotification.setOnCheckedChangeListener { _, isChecked ->
@@ -125,6 +128,18 @@ class SettingsFragment : Fragment() {
         binding.switchAnimations.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setAnimationsEnabled(isChecked)
         }
+    }
+
+    /**
+     * Применяет тему приложения в зависимости от настроек.
+     */
+    private fun applyTheme(useSystemTheme: Boolean, darkThemeEnabled: Boolean) {
+        val mode = when {
+            useSystemTheme -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+            darkThemeEnabled -> AppCompatDelegate.MODE_NIGHT_YES
+            else -> AppCompatDelegate.MODE_NIGHT_NO
+        }
+        AppCompatDelegate.setDefaultNightMode(mode)
     }
 
     override fun onDestroyView() {
