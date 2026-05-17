@@ -29,7 +29,7 @@ interface CatFactDao {
     @Query("UPDATE cat_facts SET isFavorite = :isFavorite WHERE id = :id")
     suspend fun updateFavoriteStatus(id: Long, isFavorite: Boolean)
 
-    // --- НОВЫЕ МЕТОДЫ ДЛЯ ПОСЛЕДНИХ ПРОСМОТРЕННЫХ ---
+    // --- МЕТОДЫ ДЛЯ ПОСЛЕДНИХ ПРОСМОТРЕННЫХ ---
     @Query("UPDATE cat_facts SET lastViewedTimestamp = :timestamp WHERE id = :id")
     suspend fun updateLastViewedTimestamp(id: Long, timestamp: Long)
 
@@ -38,4 +38,11 @@ interface CatFactDao {
 
     @Query("SELECT * FROM cat_facts WHERE lastViewedTimestamp IS NOT NULL ORDER BY lastViewedTimestamp DESC LIMIT :limit")
     suspend fun getRecentlyViewedFactsLimit(limit: Int): List<CatFactEntity>
+
+    @Query("SELECT * FROM cat_facts WHERE id IN (:ids)")
+    fun getFactsByIds(ids: List<Long>): Flow<List<CatFactEntity>>
+
+    // --- НОВЫЙ МЕТОД ДЛЯ ПОИСКА ---
+    @Query("SELECT * FROM cat_facts WHERE text LIKE '%' || :query || '%' OR category LIKE '%' || :query || '%'")
+    fun searchFactsByText(query: String): Flow<List<CatFactEntity>>
 }

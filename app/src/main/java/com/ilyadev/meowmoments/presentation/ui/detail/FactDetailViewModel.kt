@@ -51,7 +51,7 @@ class FactDetailViewModel @Inject constructor(
     fun markAsViewed(factId: Long) {
         viewModelScope.launch {
             try {
-                repository.updateLastViewedTimestamp(factId, System.currentTimeMillis())
+                repository.markFactAsViewed(factId)
             } catch (e: Exception) {
                 e.printStackTrace()
                 // Можно добавить логирование ошибки или обновление UI, если нужно

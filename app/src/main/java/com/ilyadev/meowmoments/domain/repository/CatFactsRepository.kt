@@ -36,6 +36,14 @@ interface CatFactsRepository {
     suspend fun updateFavoriteStatus(factId: Long, isFavorite: Boolean)
 
     // --- МЕТОДЫ ДЛЯ ПОСЛЕДНИХ ПРОСМОТРЕННЫХ ---
-    suspend fun updateLastViewedTimestamp(factId: Long, timestamp: Long)
-    fun getRecentlyViewedFacts(): Flow<List<CatFact>>
+    suspend fun markFactAsViewed(factId: Long)
+    fun getRecentlyViewedFacts(limit: Int = 20): Flow<List<CatFact>>
+
+    // --- НОВЫЙ МЕТОД ДЛЯ ПОИСКА ---
+    /**
+     * Ищет факты по тексту в заголовке или описании.
+     * @param query Текст для поиска
+     * @return Flow с найденными фактами
+     */
+    fun searchFacts(query: String): Flow<List<CatFact>>
 }

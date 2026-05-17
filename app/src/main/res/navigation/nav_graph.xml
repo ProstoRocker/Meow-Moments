@@ -136,6 +136,11 @@
                 app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
                 app:nullable="false" />
         </action>
+
+        <!-- НОВОЕ: Переход к поиску из MyFactsFragment -->
+        <action
+            android:id="@+id/action_myFactsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
 
     <fragment
@@ -230,6 +235,22 @@
             android:name="fact"
             app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
             app:nullable="false" />
+    </fragment>
+
+    <!-- НОВОЕ: Фрагмент поиска -->
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.search.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_factDetailFragment"
+            app:destination="@id/factDetailFragment">
+            <argument
+                android:name="fact"
+                app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
+                app:nullable="false" />
+        </action>
     </fragment>
 
 </navigation>

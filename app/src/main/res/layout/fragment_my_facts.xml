@@ -9,7 +9,8 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         app:layout_constraintTop_toTopOf="parent"
-        app:title="Мои факты" />
+        app:title="Мои факты"
+        app:menu="@menu/menu_my_facts" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_layout"

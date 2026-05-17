@@ -1,7 +1,11 @@
 package com.ilyadev.meowmoments.presentation.ui.collection
 
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.BackgroundColorSpan
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -11,7 +15,8 @@ import com.ilyadev.meowmoments.domain.model.CatFact
 
 class FactAdapter(
     private val onFactClick: (CatFact) -> Unit,
-    private val onFavoriteClick: ((CatFact) -> Unit)? = null // Новый параметр для клика по звезде
+    private val onFavoriteClick: ((CatFact) -> Unit)? = null, // Новый параметр для клика по звезде
+    private val highlightText: String = "" // НОВОЕ: Текст для подсветки (по умолчанию пустой)
 ) : ListAdapter<CatFact, FactAdapter.FactViewHolder>(FactDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactViewHolder {
@@ -31,7 +36,40 @@ class FactAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(fact: CatFact) {
-            binding.tvFactText.text = fact.text
+            // --- ПОДСВЕТКА НАЙДЕННЫХ СЛОВ (опционально) ---
+            if (highlightText.isNotBlank()) {
+                // Подсвечиваем найденный текст в fact.text
+                val spannable = SpannableStringBuilder(fact.text)
+                val lowerText = fact.text.lowercase()
+                val lowerQuery = highlightText.lowercase()
+
+                var startIndex = 0
+                while (true) {
+                    val index = lowerText.indexOf(lowerQuery, startIndex)
+                    if (index == -1) break
+
+                    // Подсвечиваем найденное слово
+                    spannable.setSpan(
+                        BackgroundColorSpan(
+                            ContextCompat.getColor(
+                                binding.root.context,
+                                R.color.md_theme_primaryContainer
+                            )
+                        ),
+                        index,
+                        index + highlightText.length,
+                        Spanned.SPAN_EXCLUSIVE_EXCLUSIVE
+                    )
+
+                    startIndex = index + highlightText.length
+                }
+
+                binding.tvFactText.text = spannable
+            } else {
+                // Просто устанавливаем текст без подсветки
+                binding.tvFactText.text = fact.text
+            }
+
             binding.tvFactCategory.text = "#${fact.category}"
 
             // --- ОБНОВЛЕНИЕ ИКОНКИ ЗВЕЗДЫ ---

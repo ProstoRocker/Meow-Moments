@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ilyadev.meowmoments.R
@@ -48,6 +49,20 @@ class MyFactsFragment : Fragment() {
                 else -> null
             }
         }.attach()
+
+        // --- НОВОЕ: Настройка Toolbar и обработка нажатия на поиск ---
+        binding.toolbar.inflateMenu(R.menu.menu_my_facts)
+        binding.toolbar.setOnMenuItemClickListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.action_search -> {
+                    val action = MyFactsFragmentDirections.actionMyFactsFragmentToSearchFragment()
+                    findNavController().navigate(action)
+                    true
+                }
+
+                else -> false
+            }
+        }
     }
 
     override fun onDestroyView() {
