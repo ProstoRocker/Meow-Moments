@@ -10,10 +10,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.databinding.FragmentSettingsBinding
 import com.ilyadev.meowmoments.presentation.push.NotificationScheduler
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.util.Calendar
 import javax.inject.Inject
 
@@ -97,7 +97,9 @@ class SettingsFragment : Fragment() {
         binding.switchDailyNotification.setOnCheckedChangeListener { _, isChecked ->
             viewModel.setDailyNotificationEnabled(isChecked)
             if (isChecked) {
-                notificationScheduler.scheduleDailyFactNotification()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    notificationScheduler.scheduleDailyFactNotification()
+                }
             } else {
                 notificationScheduler.cancelDailyFactNotification()
             }

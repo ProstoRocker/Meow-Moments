@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.*
 import com.ilyadev.meowmoments.domain.repository.SettingsRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.flow.first
 import javax.inject.Inject
 import javax.inject.Singleton
 import java.util.concurrent.TimeUnit
@@ -18,10 +19,10 @@ class NotificationScheduler @Inject constructor(
         private const val WORK_NAME = "daily_fact_notification"
     }
 
-    fun scheduleDailyFactNotification() {
+    suspend fun scheduleDailyFactNotification() {
         // Получаем настройки уведомлений
-        val shouldNotify = settingsRepository.getDailyNotificationEnabled()
-        val notificationTime = settingsRepository.getNotificationTime()
+        val shouldNotify = settingsRepository.getDailyNotificationEnabled().first()
+        val notificationTime = settingsRepository.getNotificationTime().first()
 
         if (!shouldNotify) {
             cancelDailyFactNotification()

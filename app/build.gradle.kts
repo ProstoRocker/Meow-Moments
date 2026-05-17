@@ -58,9 +58,8 @@ android {
 dependencies {
 
     // Hilt для WorkManager
-    implementation("androidx.hilt:hilt-work:1.1.0")
-    kapt("androidx.hilt:hilt-compiler:1.1.0")
-    kapt("com.google.dagger:hilt-compiler:2.51.1")
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
 
     // -- Firebase Cloud Messaging
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
