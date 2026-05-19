@@ -1,5 +1,6 @@
 package com.ilyadev.meowmoments.domain.repository
 
+import androidx.paging.PagingData
 import com.ilyadev.meowmoments.domain.model.CatFact
 import kotlinx.coroutines.flow.Flow
 
@@ -46,4 +47,7 @@ interface CatFactsRepository {
      * @return Flow с найденными фактами
      */
     fun searchFacts(query: String): Flow<List<CatFact>>
+
+    // --- НОВЫЙ МЕТОД ---
+    fun getPagedCollectedFacts(): Flow<PagingData<CatFact>>
 }

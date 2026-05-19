@@ -8,14 +8,17 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
+import androidx.work.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.data.local.DatabaseInitializer
 import com.ilyadev.meowmoments.domain.repository.SettingsRepository
 import com.ilyadev.meowmoments.presentation.ui.main.MainViewModel
+import com.ilyadev.meowmoments.work.SyncFactsWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 @AndroidEntryPoint
@@ -40,11 +43,11 @@ class MainActivity : AppCompatActivity() {
         // Инициализируем базу данных
         initializeDatabase()
 
-        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
-        val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
-        val navController = navHostFragment.navController
-        navView.setupWithNavController(navController)
+        // Запланировать фоновую синхронизацию
+        scheduleBackgroundSync()
+
+        // Настройка навигации
+        setupNavigation()
     }
 
     /**
@@ -69,5 +72,29 @@ class MainActivity : AppCompatActivity() {
 
     private fun initializeDatabase() {
         viewModel.initializeDatabase(databaseInitializer)
+    }
+
+    private fun setupNavigation() {
+        val navView: BottomNavigationView = findViewById(R.id.bottom_navigation)
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(R.id.nav_host_fragment_activity_main) as NavHostFragment
+        val navController = navHostFragment.navController
+        navView.setupWithNavController(navController)
+    }
+
+    private fun scheduleBackgroundSync() {
+        val syncWork = PeriodicWorkRequestBuilder<SyncFactsWorker>(
+            repeatInterval = 1, // Повторять
+            repeatIntervalTimeUnit = TimeUnit.DAYS // раз в день
+        )
+            .setInitialDelay(1, TimeUnit.HOURS) // Первый запуск через 1 час
+            .build()
+
+        WorkManager.getInstance(this)
+            .enqueueUniquePeriodicWork(
+                "sync_facts_work", // Уникальное имя
+                ExistingPeriodicWorkPolicy.KEEP, // Не перезаписывать
+                syncWork
+            )
     }
 }

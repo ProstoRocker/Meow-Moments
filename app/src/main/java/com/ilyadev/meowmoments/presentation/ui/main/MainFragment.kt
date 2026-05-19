@@ -38,44 +38,44 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        // --- НОВОЕ: Настройка SwipeRefreshLayout ---
+        setupSwipeRefresh()
+
         // --- ДОБАВЛЕНЫ ПЕРЕХОДЫ ---
         binding.btnNextFact.setOnClickListener {
             viewModel.refreshFact()
         }
 
-        // Клик по счётчику коллекции -> переход в CollectionFragment
+        // Клик по счётчику коллекции -> переход в MyFactsFragment
         binding.tvCollectionProgress.setOnClickListener {
             Log.d(
                 "MainFragment",
-                "Clicked on collection progress, navigating to CollectionFragment"
+                "Clicked on collection progress, navigating to MyFactsFragment"
             )
             val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
 
-        // Клик по изображению -> переход в CollectionFragment (или можно в детализацию текущего факта)
+        // Клик по изображению -> переход в MyFactsFragment
         binding.ivFactImage.setOnClickListener {
-            Log.d("MainFragment", "Clicked on fact image, navigating to CollectionFragment")
+            Log.d("MainFragment", "Clicked on fact image, navigating to MyFactsFragment")
             val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
 
-        // Клик по тексту факта -> переход в детализацию текущего факта (опционально)
+        // Клик по тексту факта -> переход в MyFactsFragment
         binding.tvFactText.setOnClickListener {
             Log.d(
                 "MainFragment",
-                "Clicked on fact text, attempting to navigate to FactDetailFragment"
+                "Clicked on fact text, attempting to navigate to MyFactsFragment"
             )
-            // Получаем текущий факт из ViewModel (если он доступен)
-            // Это сложнее, так как ViewModel не хранит текущий факт в открытом виде
-            // Вместо этого, клик на текст ведет в коллекцию
             val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
 
-        // Клик по категории -> переход в CollectionFragment
+        // Клик по категории -> переход в MyFactsFragment
         binding.tvFactCategory.setOnClickListener {
-            Log.d("MainFragment", "Clicked on fact category, navigating to CollectionFragment")
+            Log.d("MainFragment", "Clicked on fact category, navigating to MyFactsFragment")
             val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
@@ -95,20 +95,42 @@ class MainFragment : Fragment() {
                         MainUiState.Loading -> {
                             binding.progressBar.visibility = View.VISIBLE
                             binding.contentScrollview.visibility = View.GONE
+                            // --- НОВОЕ: Останавливаем анимацию refresh при загрузке ---
+                            binding.swipeRefresh.isRefreshing = false
                         }
 
                         is MainUiState.Success -> {
                             binding.progressBar.visibility = View.GONE
                             binding.contentScrollview.visibility = View.VISIBLE
                             bindFact(state.fact)
+                            // --- НОВОЕ: Останавливаем анимацию refresh при успехе ---
+                            binding.swipeRefresh.isRefreshing = false
                         }
 
                         is MainUiState.Error -> {
                             binding.progressBar.visibility = View.GONE
                             binding.contentScrollview.visibility = View.GONE
+                            binding.swipeRefresh.isRefreshing = false // --- НОВОЕ ---
                             Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
                         }
                     }
+                }
+            }
+        }
+    }
+
+    // --- НОВОЕ: Настройка обработки свайпа вниз ---
+    private fun setupSwipeRefresh() {
+        binding.swipeRefresh.setOnRefreshListener {
+            Log.d("MainFragment", "Swipe refresh triggered, refreshing fact")
+            viewModel.refreshFact()
+        }
+
+        // Убедимся, что анимация не включена, если данные не загружаются
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    binding.swipeRefresh.isRefreshing = state is MainUiState.Loading
                 }
             }
         }

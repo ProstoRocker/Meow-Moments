@@ -44,6 +44,7 @@ coil = "2.7.0"
 
 # --- Coroutines ---
 coroutines = "1.9.0"
+swiperefreshlayout = "1.2.0"
 
 
 [libraries]
@@ -78,6 +79,7 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-android-compiler", v
 # --- Database: Room ---
 androidx-room-runtime = { group = "androidx.room", name = "room-runtime", version.ref = "room" }
 androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "room" }
+androidx-room-paging = { group = "androidx.room", name = "room-paging", version.ref = "room" }
 androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "room" }
 
 # --- Preferences: DataStore ---
@@ -95,6 +97,7 @@ coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 # --- Coroutines ---
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
+androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
 
 # --- Compose (временно, если не используется) ---
 # androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

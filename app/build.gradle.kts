@@ -22,7 +22,11 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField("String", "THE_CAT_API_KEY", "\"${project.findProperty("THE_CAT_API_KEY")}\"")
+        buildConfigField(
+            "String",
+            "THE_CAT_API_KEY",
+            "\"${project.findProperty("THE_CAT_API_KEY")}\""
+        )
     }
 
     buildTypes {
@@ -57,6 +61,14 @@ android {
 
 dependencies {
 
+    //Coil
+    implementation("io.coil-kt:coil:2.6.0")
+    implementation("io.coil-kt:coil-gif:2.6.0")
+
+    // Paging 3
+    implementation("androidx.paging:paging-runtime-ktx:3.3.2")
+    implementation("androidx.paging:paging-compose:3.3.2")
+
     // Hilt для WorkManager
     implementation("androidx.hilt:hilt-work:1.2.0")
     kapt("androidx.hilt:hilt-compiler:1.2.0")
@@ -75,6 +87,7 @@ dependencies {
     implementation(libs.material) // Добавляем Material Components
     implementation(libs.androidx.constraintlayout) // Для View System Layouts
     implementation(libs.androidx.fragment.ktx) // Для Fragment API
+    implementation(libs.androidx.swiperefreshlayout)
 
     // --- Navigation ---
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -92,6 +105,7 @@ dependencies {
     // --- Room ---
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx) // Kotlin Extensions для Room
+    implementation(libs.androidx.room.paging)
     kapt(libs.androidx.room.compiler) // Используем kapt для Room Compiler
 
     // --- DataStore (для настроек) ---
