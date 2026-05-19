@@ -45,32 +45,38 @@ class MainFragment : Fragment() {
 
         // Клик по счётчику коллекции -> переход в CollectionFragment
         binding.tvCollectionProgress.setOnClickListener {
-            Log.d("MainFragment", "Clicked on collection progress, navigating to CollectionFragment")
-            val action = MainFragmentDirections.actionMainFragmentToCollectionFragment()
+            Log.d(
+                "MainFragment",
+                "Clicked on collection progress, navigating to CollectionFragment"
+            )
+            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
 
         // Клик по изображению -> переход в CollectionFragment (или можно в детализацию текущего факта)
         binding.ivFactImage.setOnClickListener {
             Log.d("MainFragment", "Clicked on fact image, navigating to CollectionFragment")
-            val action = MainFragmentDirections.actionMainFragmentToCollectionFragment()
+            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
 
         // Клик по тексту факта -> переход в детализацию текущего факта (опционально)
         binding.tvFactText.setOnClickListener {
-            Log.d("MainFragment", "Clicked on fact text, attempting to navigate to FactDetailFragment")
+            Log.d(
+                "MainFragment",
+                "Clicked on fact text, attempting to navigate to FactDetailFragment"
+            )
             // Получаем текущий факт из ViewModel (если он доступен)
             // Это сложнее, так как ViewModel не хранит текущий факт в открытом виде
             // Вместо этого, клик на текст ведет в коллекцию
-            val action = MainFragmentDirections.actionMainFragmentToCollectionFragment()
+            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
 
         // Клик по категории -> переход в CollectionFragment
         binding.tvFactCategory.setOnClickListener {
             Log.d("MainFragment", "Clicked on fact category, navigating to CollectionFragment")
-            val action = MainFragmentDirections.actionMainFragmentToCollectionFragment()
+            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
             findNavController().navigate(action)
         }
 

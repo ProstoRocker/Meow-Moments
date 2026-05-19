@@ -2,6 +2,7 @@ package com.ilyadev.meowmoments.data.repository
 
 import com.ilyadev.meowmoments.data.local.dao.CatFactDao
 import com.ilyadev.meowmoments.data.local.dao.CollectedFactDao
+import com.ilyadev.meowmoments.data.local.dao.RecentlyViewedFactDao
 import com.ilyadev.meowmoments.data.local.entities.CollectedFactEntity
 import com.ilyadev.meowmoments.data.remote.api.CatFactsApiService
 import com.ilyadev.meowmoments.domain.model.CatFact
@@ -16,6 +17,7 @@ import javax.inject.Inject
 class CatFactsRepositoryImpl @Inject constructor(
     private val catFactDao: CatFactDao,
     private val collectedFactDao: CollectedFactDao,
+    private val recentlyViewedFactDao: RecentlyViewedFactDao,
     private val catFactsApiService: CatFactsApiService
 ) : CatFactsRepository {
 
@@ -81,7 +83,7 @@ class CatFactsRepositoryImpl @Inject constructor(
         )
     }
 
-    // --- Добавлены методы для избранного ---
+    // --- Методы для избранного ---
     override fun getFavoriteFacts(): Flow<List<CatFact>> {
         return catFactDao.getFavoriteFacts().map { entities ->
             entities.map { entity ->
@@ -92,6 +94,54 @@ class CatFactsRepositoryImpl @Inject constructor(
 
     override suspend fun updateFavoriteStatus(factId: Long, isFavorite: Boolean) {
         catFactDao.updateFavoriteStatus(factId, isFavorite)
+    }
+
+    // --- Методы для последних просмотренных ---
+    override suspend fun markFactAsViewed(factId: Long) {
+        // Вставляем или заменяем запись в истории просмотров
+        recentlyViewedFactDao.insertViewedFact(
+            com.ilyadev.meowmoments.data.local.entities.RecentlyViewedFactEntity(factId = factId)
+        )
+    }
+
+    override fun getRecentlyViewedFacts(limit: Int): Flow<List<CatFact>> {
+        return recentlyViewedFactDao.getRecentlyViewedFactIds(limit)
+            .map { ids ->
+                if (ids.isEmpty()) {
+                    emptyList()
+                } else {
+                    // Получаем все соответствующие факты
+                    val factsMap = catFactDao.getFactsByIds(ids).first().associateBy { it.id }
+                    // Возвращаем их в порядке, определенном списком ids
+                    ids.mapNotNull { id -> factsMap[id] }.map { entity ->
+                        // Не забываем преобразовать в доменную модель
+                        CatFact(
+                            id = entity.id,
+                            text = entity.text,
+                            category = entity.category,
+                            imageUrl = entity.imageUrl,
+                            dateReceived = DateUtils.getCurrentDate(), // Или дата добавления в историю, если нужно
+                            isFavorite = entity.isFavorite
+                        )
+                    }
+                }
+            }
+    }
+
+    // --- НОВЫЙ МЕТОД ДЛЯ ПОИСКА ---
+    override fun searchFacts(query: String): Flow<List<CatFact>> {
+        return catFactDao.searchFactsByText(query).map { entities ->
+            entities.map { entity ->
+                CatFact(
+                    id = entity.id,
+                    text = entity.text,
+                    category = entity.category,
+                    imageUrl = entity.imageUrl,
+                    dateReceived = DateUtils.getCurrentDate(), // или дата добавления в коллекцию
+                    isFavorite = entity.isFavorite
+                )
+            }
+        }
     }
 
     /**

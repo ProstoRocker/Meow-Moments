@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ilyadev.meowmoments.databinding.FragmentCollectionBinding
+import com.ilyadev.meowmoments.presentation.ui.my_facts.MyFactsFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -42,7 +43,7 @@ class CollectionFragment : Fragment() {
     private fun setupRecyclerView() {
         factAdapter = FactAdapter(
             onFactClick = { clickedFact ->
-                val action = CollectionFragmentDirections.actionCollectionFragmentToFactDetailFragment(
+                val action = MyFactsFragmentDirections.actionMyFactsFragmentToFactDetailFragment(
                     fact = clickedFact
                 )
                 findNavController().navigate(action)

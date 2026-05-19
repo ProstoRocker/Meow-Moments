@@ -20,17 +20,10 @@
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
 
+        <!-- ИЗМЕНЕНО: Переход к объединённому экрану Мои факты -->
         <action
-            android:id="@+id/action_mainFragment_to_collectionFragment"
-            app:destination="@id/collectionFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_mainFragment_to_favoritesFragment"
-            app:destination="@id/favoritesFragment"
+            android:id="@+id/action_mainFragment_to_myFactsFragment"
+            app:destination="@id/myFactsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -68,17 +61,10 @@
             app:popEnterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_left" />
 
+        <!-- ИЗМЕНЕНО: Переход к объединённому экрану Мои факты -->
         <action
-            android:id="@+id/action_calendarFragment_to_collectionFragment"
-            app:destination="@id/collectionFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_calendarFragment_to_favoritesFragment"
-            app:destination="@id/favoritesFragment"
+            android:id="@+id/action_calendarFragment_to_myFactsFragment"
+            app:destination="@id/myFactsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -101,15 +87,16 @@
             app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
+    <!-- НОВОЕ: Объединённый фрагмент для всех фактов -->
     <fragment
-        android:id="@+id/collectionFragment"
-        android:name="com.ilyadev.meowmoments.presentation.ui.collection.CollectionFragment"
-        android:label="CollectionFragment"
-        tools:layout="@layout/fragment_collection">
+        android:id="@+id/myFactsFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.my_facts.MyFactsFragment"
+        android:label="MyFactsFragment"
+        tools:layout="@layout/fragment_my_facts">
 
-        <!-- Переходы из CollectionFragment -->
+        <!-- Переходы из MyFactsFragment -->
         <action
-            android:id="@+id/action_collectionFragment_to_mainFragment"
+            android:id="@+id/action_myFactsFragment_to_mainFragment"
             app:destination="@id/mainFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
@@ -117,7 +104,7 @@
             app:popExitAnim="@anim/slide_out_left" />
 
         <action
-            android:id="@+id/action_collectionFragment_to_calendarFragment"
+            android:id="@+id/action_myFactsFragment_to_calendarFragment"
             app:destination="@id/calendarFragment"
             app:enterAnim="@anim/slide_in_left"
             app:exitAnim="@anim/slide_out_right"
@@ -125,15 +112,7 @@
             app:popExitAnim="@anim/slide_out_left" />
 
         <action
-            android:id="@+id/action_collectionFragment_to_favoritesFragment"
-            app:destination="@id/favoritesFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_collectionFragment_to_infoFragment"
+            android:id="@+id/action_myFactsFragment_to_infoFragment"
             app:destination="@id/infoFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
@@ -141,78 +120,27 @@
             app:popExitAnim="@anim/slide_out_right" />
 
         <action
-            android:id="@+id/action_collectionFragment_to_settingsFragment"
+            android:id="@+id/action_myFactsFragment_to_settingsFragment"
             app:destination="@id/settingsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
 
+        <!-- Переход к детализации из вкладок внутри MyFactsFragment -->
         <action
-            android:id="@+id/action_collectionFragment_to_factDetailFragment"
+            android:id="@+id/action_myFactsFragment_to_factDetailFragment"
             app:destination="@id/factDetailFragment">
             <argument
                 android:name="fact"
                 app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
                 app:nullable="false" />
         </action>
-    </fragment>
 
-    <fragment
-        android:id="@+id/favoritesFragment"
-        android:name="com.ilyadev.meowmoments.presentation.ui.favorites.FavoritesFragment"
-        android:label="FavoritesFragment"
-        tools:layout="@layout/fragment_favorites">
-
-        <!-- Переходы из FavoritesFragment -->
+        <!-- НОВОЕ: Переход к поиску из MyFactsFragment -->
         <action
-            android:id="@+id/action_favoritesFragment_to_mainFragment"
-            app:destination="@id/mainFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left" />
-
-        <action
-            android:id="@+id/action_favoritesFragment_to_calendarFragment"
-            app:destination="@id/calendarFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left" />
-
-        <action
-            android:id="@+id/action_favoritesFragment_to_collectionFragment"
-            app:destination="@id/collectionFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left" />
-
-        <action
-            android:id="@+id/action_favoritesFragment_to_infoFragment"
-            app:destination="@id/infoFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_favoritesFragment_to_settingsFragment"
-            app:destination="@id/settingsFragment"
-            app:enterAnim="@anim/slide_in_right"
-            app:exitAnim="@anim/slide_out_left"
-            app:popEnterAnim="@anim/slide_in_left"
-            app:popExitAnim="@anim/slide_out_right" />
-
-        <action
-            android:id="@+id/action_favoritesFragment_to_factDetailFragment"
-            app:destination="@id/factDetailFragment">
-            <argument
-                android:name="fact"
-                app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
-                app:nullable="false" />
-        </action>
+            android:id="@+id/action_myFactsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
 
     <fragment
@@ -238,17 +166,10 @@
             app:popEnterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_left" />
 
+        <!-- ИЗМЕНЕНО: Переход к объединённому экрану Мои факты -->
         <action
-            android:id="@+id/action_infoFragment_to_collectionFragment"
-            app:destination="@id/collectionFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left" />
-
-        <action
-            android:id="@+id/action_infoFragment_to_favoritesFragment"
-            app:destination="@id/favoritesFragment"
+            android:id="@+id/action_infoFragment_to_myFactsFragment"
+            app:destination="@id/myFactsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -286,17 +207,10 @@
             app:popEnterAnim="@anim/slide_in_right"
             app:popExitAnim="@anim/slide_out_left" />
 
+        <!-- ИЗМЕНЕНО: Переход к объединённому экрану Мои факты -->
         <action
-            android:id="@+id/action_settingsFragment_to_collectionFragment"
-            app:destination="@id/collectionFragment"
-            app:enterAnim="@anim/slide_in_left"
-            app:exitAnim="@anim/slide_out_right"
-            app:popEnterAnim="@anim/slide_in_right"
-            app:popExitAnim="@anim/slide_out_left" />
-
-        <action
-            android:id="@+id/action_settingsFragment_to_favoritesFragment"
-            app:destination="@id/favoritesFragment"
+            android:id="@+id/action_settingsFragment_to_myFactsFragment"
+            app:destination="@id/myFactsFragment"
             app:enterAnim="@anim/slide_in_right"
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
@@ -311,6 +225,7 @@
             app:popExitAnim="@anim/slide_out_left" />
     </fragment>
 
+    <!-- Фрагмент детализации (остаётся как отдельный экран для навигации из вкладок) -->
     <fragment
         android:id="@+id/factDetailFragment"
         android:name="com.ilyadev.meowmoments.presentation.ui.detail.FactDetailFragment"
@@ -320,6 +235,22 @@
             android:name="fact"
             app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
             app:nullable="false" />
+    </fragment>
+
+    <!-- НОВОЕ: Фрагмент поиска -->
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.search.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search">
+        <action
+            android:id="@+id/action_searchFragment_to_factDetailFragment"
+            app:destination="@id/factDetailFragment">
+            <argument
+                android:name="fact"
+                app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
+                app:nullable="false" />
+        </action>
     </fragment>
 
 </navigation>

@@ -41,6 +41,9 @@ class FactDetailFragment : Fragment() {
         val fact = arguments?.getParcelable<CatFact>("fact") ?: return
         viewModel.setFact(fact)
 
+        // --- ОТМЕЧАЕМ ФАКТ КАК ПРОСМОТРЕННЫЙ ---
+        viewModel.markAsViewed(fact.id)
+
         setupObservers()
         setupClickListeners()
     }
@@ -57,6 +60,7 @@ class FactDetailFragment : Fragment() {
                             Log.d("FactDetailFragment", "State: Loading")
                             // Можно показать ProgressBar, если нужно
                         }
+
                         is FactDetailUiState.Success -> {
                             Log.d("FactDetailFragment", "State: Success, binding fact")
                             bindFact(state.fact)
@@ -104,7 +108,8 @@ class FactDetailFragment : Fragment() {
 
         binding.btnShare.setOnClickListener {
             Log.d("FactDetailFragment", "Share button clicked")
-            val currentFactText = (viewModel.uiState.value as? FactDetailUiState.Success)?.fact?.text ?: ""
+            val currentFactText =
+                (viewModel.uiState.value as? FactDetailUiState.Success)?.fact?.text ?: ""
             shareFact(currentFactText)
         }
     }

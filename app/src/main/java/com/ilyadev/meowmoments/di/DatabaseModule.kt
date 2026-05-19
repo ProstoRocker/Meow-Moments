@@ -33,4 +33,9 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideCollectedFactDao(appDatabase: AppDatabase) = appDatabase.collectedFactDao()
+
+    // --- НОВОЕ: Привязка для RecentlyViewedFactDao ---
+    @Provides
+    @Singleton
+    fun provideRecentlyViewedFactDao(appDatabase: AppDatabase) = appDatabase.recentlyViewedFactDao()
 }

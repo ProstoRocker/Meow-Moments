@@ -22,6 +22,7 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+        buildConfigField("String", "THE_CAT_API_KEY", "\"${project.findProperty("THE_CAT_API_KEY")}\"")
     }
 
     buildTypes {
@@ -55,6 +56,17 @@ android {
 }
 
 dependencies {
+
+    // Hilt для WorkManager
+    implementation("androidx.hilt:hilt-work:1.2.0")
+    kapt("androidx.hilt:hilt-compiler:1.2.0")
+
+    // -- Firebase Cloud Messaging
+    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+    implementation("com.google.firebase:firebase-messaging-ktx")
+
+    // -- WorkManager для планирования задач
+    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
     // --- Core ---
     implementation(libs.androidx.core.ktx)
@@ -107,9 +119,3 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0") // Для тестирования Coroutines
 }
 
-// --- НОВАЯ ЧАСТЬ ---
-    android.defaultConfig {
-    // ... applicationId, minSdk, targetSdk, versionCode, versionName ...
-    // ... testInstrumentationRunner ...
-    buildConfigField("String", "THE_CAT_API_KEY", "\"${project.findProperty("THE_CAT_API_KEY")}\"")
-}
