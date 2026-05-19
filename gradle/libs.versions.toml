@@ -18,6 +18,7 @@ activity = "1.9.3"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
+archCore = "2.2.0"
 
 # --- Lifecycle & ViewModel ---
 lifecycleRuntimeKtx = "2.8.7"
@@ -45,6 +46,9 @@ coil = "2.7.0"
 # --- Coroutines ---
 coroutines = "1.9.0"
 swiperefreshlayout = "1.2.0"
+junitKtx = "1.3.0"
+espressoContrib = "3.7.0"
+fragmentTesting = "1.8.9"
 
 
 [libraries]
@@ -62,6 +66,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
+androidx-arch-core-testing = { group = "androidx.arch.core", name = "core-testing", version.ref = "archCore" }
 
 # --- Lifecycle & ViewModel ---
 androidx-lifecycle-runtime-ktx = { group = "androidx.lifecycle", name = "lifecycle-runtime-ktx", version.ref = "lifecycleRuntimeKtx" }
@@ -98,6 +103,9 @@ coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 kotlinx-coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutines" }
 kotlinx-coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutines" }
 androidx-swiperefreshlayout = { group = "androidx.swiperefreshlayout", name = "swiperefreshlayout", version.ref = "swiperefreshlayout" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+androidx-espresso-contrib = { group = "androidx.test.espresso", name = "espresso-contrib", version.ref = "espressoContrib" }
+androidx-fragment-testing = { group = "androidx.fragment", name = "fragment-testing", version.ref = "fragmentTesting" }
 
 # --- Compose (временно, если не используется) ---
 # androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "composeBom" }

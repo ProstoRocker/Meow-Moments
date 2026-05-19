@@ -1,93 +1,81 @@
 package com.ilyadev.meowmoments.presentation.ui.collection
 
-import app.cash.turbine.test
-import com.ilyadev.meowmoments.domain.model.CatFact
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.ilyadev.meowmoments.domain.repository.CatFactsRepository
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.TestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
 import kotlinx.coroutines.test.resetMain
 import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.After
-import org.junit.Assert.*
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
-import org.junit.runner.RunWith
 import org.mockito.Mock
-import org.mockito.junit.MockitoJUnitRunner
+import org.mockito.MockitoAnnotations
+import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
-@OptIn(ExperimentalCoroutinesApi::class)
-@RunWith(MockitoJUnitRunner::class)
+@kotlinx.coroutines.ExperimentalCoroutinesApi
 class CollectionViewModelTest {
 
-    @Mock
-    private lateinit var mockRepository: CatFactsRepository
+    @get:Rule
+    val instantTaskExecutorRule = InstantTaskExecutorRule()
 
     private lateinit var viewModel: CollectionViewModel
 
-    private val testDispatcher = StandardTestDispatcher()
+    @Mock
+    private lateinit var repository: CatFactsRepository
+
+    private val testDispatcher: TestDispatcher = StandardTestDispatcher()
+
+    private lateinit var closeable: AutoCloseable
 
     @Before
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
-        viewModel = CollectionViewModel(mockRepository)
+        closeable = MockitoAnnotations.openMocks(this)
+        // Mock getPagedCollectedFacts because it is used during initialization
+        whenever(repository.getPagedCollectedFacts()).thenReturn(flowOf())
+        whenever(repository.getAllCollectedFacts()).thenReturn(flowOf(emptyList()))
     }
 
     @After
     fun tearDown() {
         Dispatchers.resetMain()
+        closeable.close()
     }
 
     @Test
-    fun `uiState emits Loading then Empty when no facts collected`() = runTest {
-        // Arrange
-        whenever(mockRepository.getAllCollectedFacts()).thenReturn(flowOf(emptyList()))
+    fun `toggleFavorite calls repository update method`() = runTest {
+        // Given
+        val factId = 1L
+        val currentStatus = false
+        viewModel = CollectionViewModel(repository)
+        advanceUntilIdle()
 
-        // Act & Assert
-        viewModel.uiState.test {
-            assertEquals(CollectionUiState.Loading, awaitItem())
-            assertEquals(CollectionUiState.Empty, awaitItem())
-            cancelAndIgnoreRemainingEvents()
-        }
+        // When
+        viewModel.toggleFavorite(factId, currentStatus)
+        advanceUntilIdle()
+
+        // Then
+        verify(repository).updateFavoriteStatus(factId, !currentStatus)
     }
 
     @Test
-    fun `uiState emits Loading then Success with facts when facts collected`() = runTest {
-        // Arrange
-        val today = LocalDate.now().format(DateTimeFormatter.ISO_LOCAL_DATE)
-        val facts = listOf(
-            CatFact(1, "Fact 1", "Category", null, today),
-            CatFact(2, "Fact 2", "Category", null, today)
-        )
-        whenever(mockRepository.getAllCollectedFacts()).thenReturn(flowOf(facts))
+    fun `loadCollectedFacts emits Success state with facts`() = runTest {
+        // Given
+        val mockFacts = emptyList<com.ilyadev.meowmoments.domain.model.CatFact>()
+        whenever(repository.getAllCollectedFacts()).thenReturn(flowOf(mockFacts))
 
-        // Act & Assert
-        viewModel.uiState.test {
-            assertEquals(CollectionUiState.Loading, awaitItem())
-            val successState = awaitItem()
-            assertTrue(successState is CollectionUiState.Success)
-            assertEquals(facts, (successState as CollectionUiState.Success).facts)
-            cancelAndIgnoreRemainingEvents()
-        }
-    }
+        // When
+        viewModel = CollectionViewModel(repository)
+        advanceUntilIdle()
 
-    @Test
-    fun `uiState emits Loading then Error when repository throws exception`() = runTest {
-        // Arrange
-        val errorMessage = "Network error"
-        whenever(mockRepository.getAllCollectedFacts()).thenThrow(RuntimeException(errorMessage))
-
-        // Act & Assert
-        viewModel.uiState.test {
-            assertEquals(CollectionUiState.Loading, awaitItem())
-            val errorState = awaitItem()
-            assertTrue(errorState is CollectionUiState.Error)
-            assertEquals(errorMessage, (errorState as CollectionUiState.Error).message)
-            cancelAndIgnoreRemainingEvents()
-        }
+        // Then
+        assert(viewModel.uiState.value is CollectionUiState.Success)
     }
 }

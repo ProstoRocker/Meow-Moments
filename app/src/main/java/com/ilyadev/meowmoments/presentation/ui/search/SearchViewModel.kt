@@ -25,37 +25,37 @@ class SearchViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     fun updateSearchQuery(query: String) {
-        _searchQuery.value = query
+        val trimmedQuery = query.trim()
+        if (_searchQuery.value == trimmedQuery) return
+        _searchQuery.value = trimmedQuery
 
         // Отменяем предыдущий поиск
         searchJob?.cancel()
 
-        // Запускаем новый поиск с задержкой (debounce)
-        searchJob = viewModelScope.launch {
-            delay(300) // 300ms задержка
-            performSearch(query)
-        }
-    }
-
-    private fun performSearch(query: String) {
-        if (query.isBlank()) {
+        if (trimmedQuery.isBlank()) {
             _uiState.value = SearchUiState.Idle
             return
         }
 
-        viewModelScope.launch {
-            _uiState.value = SearchUiState.Loading
-            try {
-                repository.searchFacts(query).collect { results ->
-                    _uiState.value = if (results.isEmpty()) {
-                        SearchUiState.NoResults
-                    } else {
-                        SearchUiState.Results(results)
-                    }
+        // Запускаем новый поиск с задержкой (debounce)
+        searchJob = viewModelScope.launch {
+            delay(300) // 300ms задержка
+            performSearch(trimmedQuery)
+        }
+    }
+
+    private suspend fun performSearch(query: String) {
+        _uiState.value = SearchUiState.Loading
+        try {
+            repository.searchFacts(query).collect { results ->
+                _uiState.value = if (results.isEmpty()) {
+                    SearchUiState.NoResults
+                } else {
+                    SearchUiState.Results(results)
                 }
-            } catch (e: Exception) {
-                _uiState.value = SearchUiState.Error("Ошибка поиска: ${e.message}")
             }
+        } catch (e: Exception) {
+            _uiState.value = SearchUiState.Error("Ошибка поиска: ${e.message}")
         }
     }
 }

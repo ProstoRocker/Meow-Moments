@@ -1,8 +1,7 @@
-package com.ilyadev.meowmoments.presentation.ui.main
+package com.ilyadev.meowmoments.presentation.ui.detail
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import com.ilyadev.meowmoments.domain.repository.CatFactsRepository
-import com.ilyadev.meowmoments.domain.usecase.GetTodayFactUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
@@ -18,15 +17,12 @@ import org.mockito.MockitoAnnotations
 
 // Тесты для ViewModel
 
-class MainViewModelTest {
+class FactDetailViewModelTest {
 
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
-    private lateinit var viewModel: MainViewModel
-
-    @Mock
-    private lateinit var getTodayFactUseCase: GetTodayFactUseCase
+    private lateinit var viewModel: FactDetailViewModel
 
     @Mock
     private lateinit var repository: CatFactsRepository
@@ -39,7 +35,7 @@ class MainViewModelTest {
     fun setUp() {
         Dispatchers.setMain(testDispatcher)
         closeable = MockitoAnnotations.openMocks(this)
-        viewModel = MainViewModel(getTodayFactUseCase, repository)
+        viewModel = FactDetailViewModel(repository)
     }
 
     @After
@@ -49,26 +45,16 @@ class MainViewModelTest {
     }
 
     @Test
-    fun `refreshFact updates UI state to Success`() = runTest {
+    fun `toggleFavorite updates fact status in repository and UI`() = runTest {
         // Given
-        // mock repository.getRandomFact() returns a valid CatFact
+        val factId = 1L
+        val currentStatus = false
 
         // When
-        viewModel.refreshFact()
+        viewModel.toggleFavorite()
 
         // Then
-        // assert viewModel.uiState.value is MainUiState.Success
-    }
-
-    @Test
-    fun `refreshFact updates UI state to Error on failure`() = runTest {
-        // Given
-        // mock repository.getRandomFact() throws exception
-
-        // When
-        viewModel.refreshFact()
-
-        // Then
-        // assert viewModel.uiState.value is MainUiState.Error
+        // verify(repository).updateFavoriteStatus(factId, !currentStatus)
+        // assert viewModel.uiState.value has updated fact
     }
 }

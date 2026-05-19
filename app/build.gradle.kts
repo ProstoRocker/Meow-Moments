@@ -57,6 +57,12 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    testOptions {
+        unitTests {
+            isIncludeAndroidResources = true
+        }
+    }
 }
 
 dependencies {
@@ -125,11 +131,20 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // --- Testing ---
+    implementation(libs.androidx.espresso.contrib)
+    implementation(libs.androidx.fragment.testing)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.arch.core.testing)
+    testImplementation("com.google.dagger:hilt-android-testing:2.55")
+    kaptTest(libs.hilt.compiler)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+    androidTestImplementation("com.google.dagger:hilt-android-testing:2.55")
+    kaptAndroidTest(libs.hilt.compiler)
     testImplementation("org.mockito:mockito-core:5.14.2") // Добавляем Mockito Core
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") // Добавляем Mockito Kotlin для удобства работы с Kotlin
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0") // Для тестирования Coroutines
+    testImplementation("org.robolectric:robolectric:4.14.1")
 }
 
