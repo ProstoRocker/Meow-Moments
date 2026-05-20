@@ -9,7 +9,7 @@ plugins {
 
 android {
     namespace = "com.ilyadev.meowmoments"
-    compileSdk = 35 // Используем =, а не вызов функции
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.ilyadev.meowmoments"
@@ -36,6 +36,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -46,11 +47,58 @@ android {
         jvmTarget = "11"
     }
 
+    // --- Настройка productFlavors ---
+    flavorDimensions += "version"
+    productFlavors {
+        create("free") {
+            dimension = "version"
+            applicationIdSuffix = ".free"
+            versionNameSuffix = "-free"
+        }
+        create("paid") {
+            dimension = "version"
+            applicationIdSuffix = ".paid"
+            versionNameSuffix = "-paid"
+        }
+    }
+
+    // --- Убедиться, что debug и release создаются для каждого flavor ---
+    buildTypes.all {
+        // Убедиться, что каждый buildType создает APK для каждого flavor
+    }
+
+    // --- Настройка копирования нужного nav_graph ---
+    afterEvaluate {
+        android.applicationVariants.forEach { variant ->
+            val variantName = variant.name.replaceFirstChar { it.uppercase() }
+            val flavorName = variant.productFlavors.firstOrNull()?.name
+
+            if (flavorName == "free") {
+                tasks.register<Copy>("copy${variantName}NavGraph") {
+                    from("src/main/res/navigation/nav_graph_free.xml")
+                    into("$buildDir/intermediates/merged_res/${variant.dirName}/res/navigation")
+                    rename { "nav_graph.xml" }
+                }
+                tasks.matching { it.name == "merge${variantName}Resources" }.configureEach {
+                    dependsOn("copy${variantName}NavGraph")
+                }
+            } else if (flavorName == "paid") {
+                tasks.register<Copy>("copy${variantName}NavGraph") {
+                    from("src/main/res/navigation/nav_graph_paid.xml")
+                    into("$buildDir/intermediates/merged_res/${variant.dirName}/res/navigation")
+                    rename { "nav_graph.xml" }
+                }
+                tasks.matching { it.name == "merge${variantName}Resources" }.configureEach {
+                    dependsOn("copy${variantName}NavGraph")
+                }
+            }
+        }
+    }
+
     // УБРАЛИ buildFeatures { compose = true }, так как используем View System
     buildFeatures {
         viewBinding = true // Включаем View Binding
         buildConfig = true
-        // compose = false // Явно указать не обязательно, но для ясности
     }
     packaging {
         resources {
@@ -94,6 +142,7 @@ dependencies {
     implementation(libs.androidx.constraintlayout) // Для View System Layouts
     implementation(libs.androidx.fragment.ktx) // Для Fragment API
     implementation(libs.androidx.swiperefreshlayout)
+    implementation(libs.androidx.runtime.saved.instance.state)
 
     // --- Navigation ---
     implementation(libs.androidx.navigation.fragment.ktx)
