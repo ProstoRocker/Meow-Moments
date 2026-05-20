@@ -72,7 +72,7 @@ class FactDetailFragment : Fragment() {
     }
 
     private fun bindFact(fact: CatFact) {
-        Log.d("FactDetailFragment", "Binding fact: ${fact.text.substring(0, 20)}...")
+        Log.d("FactDetailFragment", "Binding fact: ${fact.text.take(20)}...")
 
         binding.tvFactDate.text = "Факт от ${fact.dateReceived}"
         binding.tvFactCategory.text = "#${fact.category}"

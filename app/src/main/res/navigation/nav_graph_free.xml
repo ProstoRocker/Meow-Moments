@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mainFragment">
+
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.main.MainFragment"
+        android:label="MainFragment"
+        tools:layout="@layout/fragment_main">
+
+        <!-- Переходы из MainFragment -->
+        <action
+            android:id="@+id/action_mainFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+
+        <!-- В бесплатной версии эти переходы могут быть ограничены в UI,
+             но они нужны здесь для успешной компиляции общего кода в main -->
+        <action
+            android:id="@+id/action_mainFragment_to_myFactsFragment"
+            app:destination="@id/myFactsFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_calendarFragment"
+            app:destination="@id/calendarFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_infoFragment"
+            app:destination="@id/infoFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/myFactsFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.my_facts.MyFactsFragment"
+        android:label="MyFactsFragment"
+        tools:layout="@layout/fragment_my_facts">
+        <action
+            android:id="@+id/action_myFactsFragment_to_searchFragment"
+            app:destination="@id/searchFragment" />
+        <action
+            android:id="@+id/action_myFactsFragment_to_factDetailFragment"
+            app:destination="@id/factDetailFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/calendarFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.calendar.CalendarFragment"
+        android:label="CalendarFragment" />
+
+    <fragment
+        android:id="@+id/infoFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.info.InfoFragment"
+        android:label="InfoFragment" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.settings.SettingsFragment"
+        android:label="SettingsFragment"
+        tools:layout="@layout/fragment_settings">
+
+        <action
+            android:id="@+id/action_settingsFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_out_right"
+            app:popEnterAnim="@anim/slide_in_right"
+            app:popExitAnim="@anim/slide_out_left" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/factDetailFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.detail.FactDetailFragment"
+        android:label="FactDetailFragment"
+        tools:layout="@layout/fragment_fact_detail">
+        <argument
+            android:name="fact"
+            app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
+            app:nullable="false" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/searchFragment"
+        android:name="com.ilyadev.meowmoments.presentation.ui.search.SearchFragment"
+        android:label="SearchFragment"
+        tools:layout="@layout/fragment_search" />
+
+</navigation>

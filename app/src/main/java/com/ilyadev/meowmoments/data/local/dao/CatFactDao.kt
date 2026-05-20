@@ -1,5 +1,6 @@
 package com.ilyadev.meowmoments.data.local.dao
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -45,4 +46,12 @@ interface CatFactDao {
     // --- НОВЫЙ МЕТОД ДЛЯ ПОИСКА ---
     @Query("SELECT * FROM cat_facts WHERE text LIKE '%' || :query || '%' OR category LIKE '%' || :query || '%'")
     fun searchFactsByText(query: String): Flow<List<CatFactEntity>>
+
+    // --- НОВЫЙ МЕТОД ---
+    @Query("SELECT * FROM cat_facts ORDER BY id LIMIT :pageSize OFFSET :offset")
+    suspend fun getCatFactsPaged(offset: Int, pageSize: Int): List<CatFactEntity>
+
+    // Для Paging 3
+    @Query("SELECT * FROM cat_facts ORDER BY id")
+    fun getPagedCatFacts(): PagingSource<Int, CatFactEntity>
 }

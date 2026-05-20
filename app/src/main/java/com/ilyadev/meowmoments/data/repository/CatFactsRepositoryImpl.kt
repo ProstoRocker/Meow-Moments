@@ -1,5 +1,10 @@
 package com.ilyadev.meowmoments.data.repository
 
+import android.util.Log
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingData
+import androidx.paging.map
 import com.ilyadev.meowmoments.data.local.dao.CatFactDao
 import com.ilyadev.meowmoments.data.local.dao.CollectedFactDao
 import com.ilyadev.meowmoments.data.local.dao.RecentlyViewedFactDao
@@ -35,7 +40,14 @@ class CatFactsRepositoryImpl @Inject constructor(
 
         // Получаем все факты
         val allFacts = catFactDao.getAllFacts().first()
-        if (allFacts.isEmpty()) return null
+        if (allFacts.isEmpty()) {
+            // Если в базе нет фактов, пробуем синхронизировать
+            syncFacts()
+            // Повторно пытаемся получить факты
+            val updatedFacts = catFactDao.getAllFacts().first()
+            if (updatedFacts.isEmpty()) return null
+            return updatedFacts.random().let { mapToDomain(it, today) }
+        }
 
         // Фильтруем факты, которые еще не собраны
         val uncollectedFacts = allFacts.filter { fact ->
@@ -65,6 +77,29 @@ class CatFactsRepositoryImpl @Inject constructor(
         }
     }
 
+    // --- НОВЫЙ МЕТОД ДЛЯ ПАГИНАЦИИ ---
+    override fun getPagedCollectedFacts(): Flow<PagingData<CatFact>> {
+        return Pager(
+            config = PagingConfig(
+                pageSize = 20,
+                enablePlaceholders = true
+            ),
+            pagingSourceFactory = { catFactDao.getPagedCatFacts() }
+        ).flow.map { pagingData ->
+            pagingData.map { entity ->
+                // Преобразуем сущность в доменную модель
+                CatFact(
+                    id = entity.id,
+                    text = entity.text,
+                    category = entity.category,
+                    imageUrl = entity.imageUrl,
+                    dateReceived = DateUtils.getCurrentDate(), // или дата из сущности
+                    isFavorite = entity.isFavorite
+                )
+            }
+        }
+    }
+
     override suspend fun getCollectedCount(): Int {
         return collectedFactDao.getCollectedCount()
     }
@@ -73,14 +108,29 @@ class CatFactsRepositoryImpl @Inject constructor(
         return collectedFactDao.getCollectedCountAsFlow()
     }
 
+    // --- УЛУЧШЕННЫЙ МЕТОД ДЛЯ OFFLINE-FIRST ---
     override suspend fun getRandomFact(): CatFact? {
-        val allFacts = catFactDao.getAllFacts().first()
-        if (allFacts.isEmpty()) return null
-        val randomEntity = allFacts.random()
-        return mapToDomain(
-            randomEntity,
-            DateUtils.getCurrentDate()
-        )
+        // Сначала пробуем получить случайный факт из локальной базы
+        val localFacts = catFactDao.getAllFacts().first()
+        if (localFacts.isNotEmpty()) {
+            val randomLocalFact = localFacts.random()
+            return mapToDomain(randomLocalFact, DateUtils.getCurrentDate())
+        }
+
+        // Если в базе нет фактов, пробуем синхронизировать
+        try {
+            syncFacts()
+            // После синхронизации снова пробуем получить из базы
+            val updatedFacts = catFactDao.getAllFacts().first()
+            if (updatedFacts.isNotEmpty()) {
+                return mapToDomain(updatedFacts.random(), DateUtils.getCurrentDate())
+            }
+        } catch (e: Exception) {
+            Log.e("CatFactsRepository", "Failed to sync facts for getRandomFact", e)
+            // Если синхронизация не удалась, возвращаем null
+        }
+
+        return null
     }
 
     // --- Методы для избранного ---
@@ -141,6 +191,30 @@ class CatFactsRepositoryImpl @Inject constructor(
                     isFavorite = entity.isFavorite
                 )
             }
+        }
+    }
+
+    // --- НОВЫЙ МЕТОД ДЛЯ OFFLINE-FIRST СИНХРОНИЗАЦИИ ---
+    suspend fun syncFacts() {
+        try {
+            val response = catFactsApiService.getFacts(10) // Загружаем 10 новых фактов
+            if (response.isSuccessful && response.body() != null) {
+                val apiFacts = response.body()!!.facts
+                val entitiesToInsert = apiFacts.map { dto ->
+                    com.ilyadev.meowmoments.data.local.entities.CatFactEntity(
+                        text = dto.fact,
+                        imageUrl = CataasUtils.generateCataasUrl(dto.fact),
+                        category = "API" // или как-то иначе определять категорию
+                    )
+                }
+                // Сохраняем в базу данных
+                catFactDao.insertAll(entitiesToInsert)
+            } else {
+                Log.e("CatFactsRepository", "API request failed: ${response.code()}")
+            }
+        } catch (e: Exception) {
+            Log.e("CatFactsRepository", "Failed to sync facts", e)
+            // Не бросаем исключение, чтобы не прерывать работу приложения
         }
     }
 
