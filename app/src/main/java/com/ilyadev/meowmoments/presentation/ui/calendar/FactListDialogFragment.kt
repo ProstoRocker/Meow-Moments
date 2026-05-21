@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.databinding.DialogFactListBinding
@@ -44,7 +45,14 @@ class FactListDialogFragment : DialogFragment() {
         binding.tvDialogTitle.text = getString(R.string.facts_for_date, date)
         binding.btnDismiss.setOnClickListener { dismiss() }
 
-        factAdapter = FactListAdapter()
+        factAdapter = FactListAdapter { clickedFact ->
+            // Навигация к деталям через NavController из CalendarFragment
+            val action = CalendarFragmentDirections.actionCalendarFragmentToFactDetailFragment(
+                fact = clickedFact
+            )
+            findNavController().navigate(action)
+            dismiss()
+        }
         binding.rvFacts.apply {
             adapter = factAdapter
             layoutManager = LinearLayoutManager(context)

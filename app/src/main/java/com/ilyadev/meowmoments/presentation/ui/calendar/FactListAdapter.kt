@@ -8,25 +8,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.ilyadev.meowmoments.databinding.ItemFactBinding
 import com.ilyadev.meowmoments.domain.model.CatFact
 
-class FactListAdapter : ListAdapter<CatFact, FactListAdapter.FactViewHolder>(FactDiffCallback) {
+class FactListAdapter(
+    private val onFactClick: (CatFact) -> Unit
+) : ListAdapter<CatFact, FactListAdapter.FactViewHolder>(FactDiffCallback) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FactViewHolder {
         val binding = ItemFactBinding.inflate(
             LayoutInflater.from(parent.context), parent, false
         )
-        return FactViewHolder(binding)
+        return FactViewHolder(binding, onFactClick)
     }
 
     override fun onBindViewHolder(holder: FactViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 
-    class FactViewHolder(private val binding: ItemFactBinding) :
-        RecyclerView.ViewHolder(binding.root) {
+    class FactViewHolder(
+        private val binding: ItemFactBinding,
+        private val onFactClick: (CatFact) -> Unit
+    ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(fact: CatFact) {
             binding.tvFactText.text = fact.text
             binding.tvFactCategory.text = "#${fact.category}"
+
+            binding.root.setOnClickListener {
+                onFactClick(fact)
+            }
         }
     }
 

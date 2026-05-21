@@ -56,28 +56,37 @@ class MainFragment : Fragment() {
             findNavController().navigate(action)
         }
 
-        // Клик по изображению -> переход в MyFactsFragment
+        // Клик по изображению -> переход в FactDetailFragment
         binding.ivFactImage.setOnClickListener {
-            Log.d("MainFragment", "Clicked on fact image, navigating to MyFactsFragment")
-            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
-            findNavController().navigate(action)
+            val state = viewModel.uiState.value
+            if (state is MainUiState.Success) {
+                val action = MainFragmentDirections.actionMainFragmentToFactDetailFragment(
+                    fact = state.fact
+                )
+                findNavController().navigate(action)
+            }
         }
 
-        // Клик по тексту факта -> переход в MyFactsFragment
+        // Клик по тексту факта -> переход в FactDetailFragment
         binding.tvFactText.setOnClickListener {
-            Log.d(
-                "MainFragment",
-                "Clicked on fact text, attempting to navigate to MyFactsFragment"
-            )
-            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
-            findNavController().navigate(action)
+            val state = viewModel.uiState.value
+            if (state is MainUiState.Success) {
+                val action = MainFragmentDirections.actionMainFragmentToFactDetailFragment(
+                    fact = state.fact
+                )
+                findNavController().navigate(action)
+            }
         }
 
-        // Клик по категории -> переход в MyFactsFragment
+        // Клик по категории -> переход в FactDetailFragment
         binding.tvFactCategory.setOnClickListener {
-            Log.d("MainFragment", "Clicked on fact category, navigating to MyFactsFragment")
-            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
-            findNavController().navigate(action)
+            val state = viewModel.uiState.value
+            if (state is MainUiState.Success) {
+                val action = MainFragmentDirections.actionMainFragmentToFactDetailFragment(
+                    fact = state.fact
+                )
+                findNavController().navigate(action)
+            }
         }
 
         // Клик по дате -> переход в CalendarFragment
