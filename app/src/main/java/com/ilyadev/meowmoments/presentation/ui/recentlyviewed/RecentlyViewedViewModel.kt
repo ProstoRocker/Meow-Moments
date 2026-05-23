@@ -41,6 +41,12 @@ class RecentlyViewedViewModel @Inject constructor(
             }
         }
     }
+
+    fun toggleFavorite(factId: Long, isCurrentlyFavorite: Boolean) {
+        viewModelScope.launch {
+            repository.updateFavoriteStatus(factId, !isCurrentlyFavorite)
+        }
+    }
 }
 
 sealed interface RecentlyViewedUiState {

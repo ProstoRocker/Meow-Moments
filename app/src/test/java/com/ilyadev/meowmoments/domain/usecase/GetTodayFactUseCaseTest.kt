@@ -76,8 +76,11 @@ class GetTodayFactUseCaseTest {
         whenever(mockRepository.getFactForToday()).thenThrow(RuntimeException(exceptionMessage))
 
         // Act & Assert
-        assertThrows(RuntimeException::class.java) {
-            runTest { useCase() } // runTest внутри assertThrows
+        try {
+            useCase()
+            fail("Expected RuntimeException to be thrown")
+        } catch (e: RuntimeException) {
+            assertEquals(exceptionMessage, e.message)
         }
     }
 }

@@ -44,6 +44,15 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_factDetailFragment"
+            app:destination="@id/factDetailFragment">
+            <argument
+                android:name="fact"
+                app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
+                app:nullable="false" />
+        </action>
     </fragment>
 
     <fragment
@@ -85,6 +94,15 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+
+        <action
+            android:id="@+id/action_calendarFragment_to_factDetailFragment"
+            app:destination="@id/factDetailFragment">
+            <argument
+                android:name="fact"
+                app:argType="com.ilyadev.meowmoments.domain.model.CatFact"
+                app:nullable="false" />
+        </action>
     </fragment>
 
     <!-- НОВОЕ: Объединённый фрагмент для всех фактов -->

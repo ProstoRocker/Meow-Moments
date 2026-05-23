@@ -23,6 +23,11 @@ abstract class RepositoryModule {
     abstract fun bindCatFactsRepository(
         impl: CatFactsRepositoryImpl
     ): CatFactsRepository
+}
+
+@Module
+@InstallIn(SingletonComponent::class)
+abstract class SettingsModule {
 
     @Binds
     @Singleton

@@ -11,6 +11,7 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.navArgs
 import coil.load
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.databinding.FragmentFactDetailBinding
@@ -22,6 +23,7 @@ import kotlinx.coroutines.launch
 class FactDetailFragment : Fragment() {
 
     private val viewModel: FactDetailViewModel by viewModels()
+    private val args: FactDetailFragmentArgs by navArgs()
     private var _binding: FragmentFactDetailBinding? = null
     private val binding get() = _binding!!
 
@@ -37,8 +39,10 @@ class FactDetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // Получаем факт из аргументов
-        val fact = arguments?.getParcelable<CatFact>("fact") ?: return
+        // Получаем факт из аргументов через SafeArgs
+        val fact = args.fact
+        Log.d("FactDetailFragment", "Received fact: ${fact.id}")
+        
         viewModel.setFact(fact)
 
         // --- ОТМЕЧАЕМ ФАКТ КАК ПРОСМОТРЕННЫЙ ---
@@ -72,7 +76,7 @@ class FactDetailFragment : Fragment() {
     }
 
     private fun bindFact(fact: CatFact) {
-        Log.d("FactDetailFragment", "Binding fact: ${fact.text.substring(0, 20)}...")
+        Log.d("FactDetailFragment", "Binding fact: ${fact.text.take(20)}...")
 
         binding.tvFactDate.text = "Факт от ${fact.dateReceived}"
         binding.tvFactCategory.text = "#${fact.category}"
@@ -98,7 +102,7 @@ class FactDetailFragment : Fragment() {
 
     private fun setupClickListeners() {
         binding.btnBack.setOnClickListener {
-            parentFragmentManager.popBackStack()
+            requireActivity().onBackPressedDispatcher.onBackPressed()
         }
 
         binding.btnFavorite.setOnClickListener {

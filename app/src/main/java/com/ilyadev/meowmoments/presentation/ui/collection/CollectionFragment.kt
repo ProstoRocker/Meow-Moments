@@ -10,9 +10,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import androidx.paging.LoadState
+import androidx.paging.LoadStateAdapter
+import androidx.recyclerview.widget.RecyclerView
 import com.ilyadev.meowmoments.databinding.FragmentCollectionBinding
 import com.ilyadev.meowmoments.presentation.ui.my_facts.MyFactsFragmentDirections
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -22,7 +26,7 @@ class CollectionFragment : Fragment() {
     private var _binding: FragmentCollectionBinding? = null
     private val binding get() = _binding!!
 
-    private lateinit var factAdapter: FactAdapter
+    private lateinit var pagingAdapter: PagingFactAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -37,11 +41,20 @@ class CollectionFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setupRecyclerView()
-        setupObservers()
+        setupLoadStateListener()
+
+        // Заменяем старую логику наблюдения за uiState на пагинацию
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.pagedFacts.collectLatest { pagingData ->
+                    pagingAdapter.submitData(pagingData)
+                }
+            }
+        }
     }
 
     private fun setupRecyclerView() {
-        factAdapter = FactAdapter(
+        pagingAdapter = PagingFactAdapter(
             onFactClick = { clickedFact ->
                 val action = MyFactsFragmentDirections.actionMyFactsFragmentToFactDetailFragment(
                     fact = clickedFact
@@ -49,49 +62,54 @@ class CollectionFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onFavoriteClick = { fact ->
+                // Для пагинации, переключение избранного нужно обновить
+                // через репозиторий и обновить список (или использовать callback)
                 viewModel.toggleFavorite(fact.id, fact.isFavorite)
             }
         )
-        binding.rvFacts.adapter = factAdapter
-    }
 
-    private fun setupObservers() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    when (state) {
-                        // --- Добавлен `is` для Loading ---
-                        is CollectionUiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.rvFacts.visibility = View.GONE
-                            binding.tvEmpty.visibility = View.GONE
-                            binding.tvError.visibility = View.GONE
-                        }
-
-                        is CollectionUiState.Empty -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.rvFacts.visibility = View.GONE
-                            binding.tvEmpty.visibility = View.VISIBLE
-                            binding.tvError.visibility = View.GONE
-                        }
-
-                        is CollectionUiState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.rvFacts.visibility = View.VISIBLE
-                            binding.tvEmpty.visibility = View.GONE
-                            binding.tvError.visibility = View.GONE
-                            factAdapter.submitList(state.facts)
-                        }
-
-                        is CollectionUiState.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.rvFacts.visibility = View.GONE
-                            binding.tvEmpty.visibility = View.GONE
-                            binding.tvError.visibility = View.VISIBLE
-                            binding.tvError.text = state.message
-                        }
+        // Добавляем адаптер загрузки (optional)
+        binding.rvFacts.adapter = pagingAdapter.withLoadStateFooter(
+            footer = object : LoadStateAdapter<RecyclerView.ViewHolder>() {
+                override fun onBindViewHolder(
+                    holder: RecyclerView.ViewHolder,
+                    loadState: LoadState
+                ) {
+                    // Показать/скрыть прогресс
+                    binding.progressBar.visibility = when (loadState) {
+                        is LoadState.Loading -> View.VISIBLE
+                        else -> View.GONE
                     }
                 }
+
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    loadState: LoadState
+                ): RecyclerView.ViewHolder {
+                    // Создаём ViewHolder для индикатора загрузки
+                    // Можно использовать отдельный layout для прогресса
+                    return object : RecyclerView.ViewHolder(
+                        LayoutInflater.from(parent.context)
+                            .inflate(android.R.layout.simple_list_item_1, parent, false)
+                    ) {}
+                }
+            }
+        )
+    }
+
+    private fun setupLoadStateListener() {
+        pagingAdapter.addLoadStateListener { loadStates ->
+            binding.progressBar.visibility = when (loadStates.refresh) {
+                is LoadState.Loading -> View.VISIBLE
+                else -> View.GONE
+            }
+
+            // Проверяем ошибки
+            if (loadStates.refresh is LoadState.Error) {
+                binding.tvError.visibility = View.VISIBLE
+                binding.tvError.text = (loadStates.refresh as LoadState.Error).error.message
+            } else {
+                binding.tvError.visibility = View.GONE
             }
         }
     }

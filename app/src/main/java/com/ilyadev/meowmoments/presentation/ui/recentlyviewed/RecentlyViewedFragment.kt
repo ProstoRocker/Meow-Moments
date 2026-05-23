@@ -10,8 +10,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.databinding.FragmentRecentlyViewedBinding
 import com.ilyadev.meowmoments.presentation.ui.collection.FactAdapter
 import com.ilyadev.meowmoments.presentation.ui.my_facts.MyFactsFragmentDirections
@@ -54,8 +52,8 @@ class RecentlyViewedFragment : Fragment() {
                 findNavController().navigate(action)
             },
             onFavoriteClick = { fact ->
-                // Можно добавить переключение избранного, если нужно
-                // viewModel.toggleFavorite(fact.id, fact.isFavorite)
+                // Переключаем статус избранного через ViewModel
+                viewModel.toggleFavorite(fact.id, fact.isFavorite)
             }
         )
         binding.rvRecentlyViewed.adapter = factAdapter

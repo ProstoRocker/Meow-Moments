@@ -9,10 +9,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="com.ilyadev.meowmoments" />
-                  <option name="mobileSdkAppId" value="1:306451709512:android:5bb9a0077e83e9b16a227d" />
-                  <option name="projectId" value="meow-moments-346f5" />
-                  <option name="projectNumber" value="306451709512" />
+                  <option name="appId" value="PLACEHOLDER" />
+                  <option name="mobileSdkAppId" value="" />
+                  <option name="projectId" value="" />
+                  <option name="projectNumber" value="" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
