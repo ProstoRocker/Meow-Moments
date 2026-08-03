@@ -13,7 +13,7 @@ import androidx.navigation.ui.setupWithNavController
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
-import com.google.android.apps.common.testing.accessibility.framework.BuildConfig
+import com.ilyadev.meowmoments.BuildConfig
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.data.local.DatabaseInitializer

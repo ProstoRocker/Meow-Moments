@@ -36,7 +36,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
     compileOptions {
@@ -62,39 +61,6 @@ android {
         }
     }
 
-    // --- Убедиться, что debug и release создаются для каждого flavor ---
-    buildTypes.all {
-        // Убедиться, что каждый buildType создает APK для каждого flavor
-    }
-
-    // --- Настройка копирования нужного nav_graph ---
-    afterEvaluate {
-        android.applicationVariants.forEach { variant ->
-            val variantName = variant.name.replaceFirstChar { it.uppercase() }
-            val flavorName = variant.productFlavors.firstOrNull()?.name
-
-            if (flavorName == "free") {
-                tasks.register<Copy>("copy${variantName}NavGraph") {
-                    from("src/main/res/navigation/nav_graph_free.xml")
-                    into("$buildDir/intermediates/merged_res/${variant.dirName}/res/navigation")
-                    rename { "nav_graph.xml" }
-                }
-                tasks.matching { it.name == "merge${variantName}Resources" }.configureEach {
-                    dependsOn("copy${variantName}NavGraph")
-                }
-            } else if (flavorName == "paid") {
-                tasks.register<Copy>("copy${variantName}NavGraph") {
-                    from("src/main/res/navigation/nav_graph_paid.xml")
-                    into("$buildDir/intermediates/merged_res/${variant.dirName}/res/navigation")
-                    rename { "nav_graph.xml" }
-                }
-                tasks.matching { it.name == "merge${variantName}Resources" }.configureEach {
-                    dependsOn("copy${variantName}NavGraph")
-                }
-            }
-        }
-    }
-
     // УБРАЛИ buildFeatures { compose = true }, так как используем View System
     buildFeatures {
         viewBinding = true // Включаем View Binding
@@ -115,13 +81,8 @@ android {
 
 dependencies {
 
-    //Coil
-    implementation("io.coil-kt:coil:2.6.0")
-    implementation("io.coil-kt:coil-gif:2.6.0")
-
     // Paging 3
     implementation("androidx.paging:paging-runtime-ktx:3.3.2")
-    implementation("androidx.paging:paging-compose:3.3.2")
 
     // Hilt для WorkManager
     implementation("androidx.hilt:hilt-work:1.2.0")
@@ -180,13 +141,13 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // --- Testing ---
-    implementation(libs.androidx.espresso.contrib)
-    implementation(libs.androidx.fragment.testing)
-    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation("com.google.dagger:hilt-android-testing:2.55")
     kaptTest(libs.hilt.compiler)
+    debugImplementation(libs.androidx.fragment.testing)
+    androidTestImplementation(libs.androidx.espresso.contrib)
+    androidTestImplementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.55")
