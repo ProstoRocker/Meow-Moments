@@ -17,6 +17,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 
+
 /** Integration Tests (Интеграционные тесты)
 Цель:
 - Проверить взаимодействие между слоями
