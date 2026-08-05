@@ -98,7 +98,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout) // Для View System Layouts
     implementation(libs.androidx.fragment.ktx) // Для Fragment API
     implementation(libs.androidx.swiperefreshlayout)
-    implementation(libs.androidx.runtime.saved.instance.state)
 
     // --- Navigation ---
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -110,7 +109,6 @@ dependencies {
 
     // --- Lifecycle & ViewModel ---
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx) // Если будешь использовать LiveData
     implementation(libs.androidx.activity) // Для ActivityResultLauncher и т.п., если нужно
 
     // --- Room ---
@@ -137,11 +135,13 @@ dependencies {
 
     // --- Testing ---
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation("com.google.dagger:hilt-android-testing:2.55")
     kaptTest(libs.hilt.compiler)
     debugImplementation(libs.androidx.fragment.testing)
     androidTestImplementation(libs.androidx.espresso.contrib)
+    testImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

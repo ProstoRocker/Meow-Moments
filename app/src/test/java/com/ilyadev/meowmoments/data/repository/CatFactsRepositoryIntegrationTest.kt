@@ -3,7 +3,7 @@ package com.ilyadev.meowmoments.data.repository
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.robolectric.RobolectricTestRunner
 import com.ilyadev.meowmoments.data.local.database.AppDatabase
 import com.ilyadev.meowmoments.data.local.entities.CatFactEntity
 import com.ilyadev.meowmoments.data.local.entities.CollectedFactEntity
@@ -24,7 +24,7 @@ import org.mockito.Mockito.mock
 - Проверить работу ViewModel с Repository
  */
 
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 class CatFactsRepositoryIntegrationTest {
 
     private lateinit var database: AppDatabase
