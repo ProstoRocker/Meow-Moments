@@ -22,11 +22,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField(
-            "String",
-            "THE_CAT_API_KEY",
-            "\"${project.findProperty("THE_CAT_API_KEY")}\""
-        )
     }
 
     buildTypes {
