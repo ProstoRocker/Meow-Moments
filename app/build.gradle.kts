@@ -1,10 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt) // Добавляем плагин Hilt
     alias(libs.plugins.kotlin.parcelize) // Для Parcelable
-    alias(libs.plugins.kotlin.kapt) // Для kapt (Room, Hilt)
     alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -33,12 +35,16 @@ android {
             )
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
 
     // --- Настройка productFlavors ---
@@ -81,7 +87,7 @@ dependencies {
 
     // Hilt для WorkManager
     implementation("androidx.hilt:hilt-work:1.2.0")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    ksp("androidx.hilt:hilt-compiler:1.2.0")
 
     // -- Firebase Cloud Messaging
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
@@ -105,7 +111,7 @@ dependencies {
 
     // --- DI: Hilt ---
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler) // Используем kapt для Hilt Compiler
+    ksp(libs.hilt.compiler)
 
     // --- Lifecycle & ViewModel ---
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
@@ -115,7 +121,7 @@ dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx) // Kotlin Extensions для Room
     implementation(libs.androidx.room.paging)
-    kapt(libs.androidx.room.compiler) // Используем kapt для Room Compiler
+    ksp(libs.androidx.room.compiler)
 
     // --- DataStore (для настроек) ---
     implementation(libs.androidx.datastore.preferences)
@@ -138,7 +144,8 @@ dependencies {
     testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation("com.google.dagger:hilt-android-testing:2.55")
-    kaptTest(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
+    kspAndroidTest(libs.hilt.compiler)
     debugImplementation(libs.androidx.fragment.testing)
     androidTestImplementation(libs.androidx.espresso.contrib)
     testImplementation(libs.androidx.espresso.core)
@@ -146,7 +153,6 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.55")
-    kaptAndroidTest(libs.hilt.compiler)
     testImplementation("org.mockito:mockito-core:5.14.2") // Добавляем Mockito Core
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") // Добавляем Mockito Kotlin для удобства работы с Kotlin
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0") // Для тестирования Coroutines
