@@ -5,7 +5,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.hasMinimumChildCount
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.robolectric.RobolectricTestRunner
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.di.RepositoryModule
 import com.ilyadev.meowmoments.domain.repository.CatFactsRepository
@@ -26,7 +26,7 @@ import org.robolectric.annotation.Config
 
 @HiltAndroidTest
 @UninstallModules(RepositoryModule::class)
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 @Config(application = HiltTestApplication::class)
 class CollectionFragmentTest {
 

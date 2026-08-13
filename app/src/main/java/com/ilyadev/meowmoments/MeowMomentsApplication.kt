@@ -1,3 +1,9 @@
+// =============================================================================
+// MeowMomentsApplication.kt
+// Главный класс приложения: инициализация Hilt, WorkManager и Coil
+// Отвечает за настройку DI, фоновых задач и кэширования изображений
+// =============================================================================
+
 package com.ilyadev.meowmoments
 
 import android.app.Application
@@ -14,13 +20,15 @@ import javax.inject.Inject
 class MeowMomentsApplication : Application(), Configuration.Provider, ImageLoaderFactory {
 
     @Inject
-    lateinit var workerFactory: HiltWorkerFactory
+    lateinit var workerFactory: HiltWorkerFactory   // Фабрика Worker'ов с поддержкой Hilt
 
+    // Конфигурация WorkManager с использованием HiltWorkerFactory для DI в Worker'ах
     override val workManagerConfiguration: Configuration
         get() = Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
 
+    // Настройка Coil для загрузки изображений с кэшированием
     override fun newImageLoader(): ImageLoader {
         return ImageLoader.Builder(this)
             .memoryCache {

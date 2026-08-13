@@ -1,10 +1,12 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.hilt) // Добавляем плагин Hilt
     alias(libs.plugins.kotlin.parcelize) // Для Parcelable
-    alias(libs.plugins.kotlin.kapt) // Для kapt (Room, Hilt)
     alias(libs.plugins.navigation.safeargs)
+    alias(libs.plugins.ksp)
 }
 
 android {
@@ -22,11 +24,6 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
-        buildConfigField(
-            "String",
-            "THE_CAT_API_KEY",
-            "\"${project.findProperty("THE_CAT_API_KEY")}\""
-        )
     }
 
     buildTypes {
@@ -36,15 +33,18 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("debug")
         }
     }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-    kotlinOptions {
-        jvmTarget = "11"
+
+    kotlin {
+        compilerOptions {
+            jvmTarget.set(JvmTarget.JVM_11)
+        }
     }
 
     // --- Настройка productFlavors ---
@@ -59,39 +59,6 @@ android {
             dimension = "version"
             applicationIdSuffix = ".paid"
             versionNameSuffix = "-paid"
-        }
-    }
-
-    // --- Убедиться, что debug и release создаются для каждого flavor ---
-    buildTypes.all {
-        // Убедиться, что каждый buildType создает APK для каждого flavor
-    }
-
-    // --- Настройка копирования нужного nav_graph ---
-    afterEvaluate {
-        android.applicationVariants.forEach { variant ->
-            val variantName = variant.name.replaceFirstChar { it.uppercase() }
-            val flavorName = variant.productFlavors.firstOrNull()?.name
-
-            if (flavorName == "free") {
-                tasks.register<Copy>("copy${variantName}NavGraph") {
-                    from("src/main/res/navigation/nav_graph_free.xml")
-                    into("$buildDir/intermediates/merged_res/${variant.dirName}/res/navigation")
-                    rename { "nav_graph.xml" }
-                }
-                tasks.matching { it.name == "merge${variantName}Resources" }.configureEach {
-                    dependsOn("copy${variantName}NavGraph")
-                }
-            } else if (flavorName == "paid") {
-                tasks.register<Copy>("copy${variantName}NavGraph") {
-                    from("src/main/res/navigation/nav_graph_paid.xml")
-                    into("$buildDir/intermediates/merged_res/${variant.dirName}/res/navigation")
-                    rename { "nav_graph.xml" }
-                }
-                tasks.matching { it.name == "merge${variantName}Resources" }.configureEach {
-                    dependsOn("copy${variantName}NavGraph")
-                }
-            }
         }
     }
 
@@ -115,24 +82,19 @@ android {
 
 dependencies {
 
-    //Coil
-    implementation("io.coil-kt:coil:2.6.0")
-    implementation("io.coil-kt:coil-gif:2.6.0")
-
     // Paging 3
     implementation("androidx.paging:paging-runtime-ktx:3.3.2")
-    implementation("androidx.paging:paging-compose:3.3.2")
 
     // Hilt для WorkManager
-    implementation("androidx.hilt:hilt-work:1.2.0")
-    kapt("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("androidx.hilt:hilt-work:1.3.0")
+    ksp("androidx.hilt:hilt-compiler:1.3.0")
 
     // -- Firebase Cloud Messaging
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
+    implementation("com.google.firebase:firebase-messaging")
 
     // -- WorkManager для планирования задач
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
 
     // --- Core ---
     implementation(libs.androidx.core.ktx)
@@ -142,7 +104,6 @@ dependencies {
     implementation(libs.androidx.constraintlayout) // Для View System Layouts
     implementation(libs.androidx.fragment.ktx) // Для Fragment API
     implementation(libs.androidx.swiperefreshlayout)
-    implementation(libs.androidx.runtime.saved.instance.state)
 
     // --- Navigation ---
     implementation(libs.androidx.navigation.fragment.ktx)
@@ -150,18 +111,17 @@ dependencies {
 
     // --- DI: Hilt ---
     implementation(libs.hilt.android)
-    kapt(libs.hilt.compiler) // Используем kapt для Hilt Compiler
+    ksp(libs.hilt.compiler)
 
     // --- Lifecycle & ViewModel ---
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
-    implementation(libs.androidx.lifecycle.livedata.ktx) // Если будешь использовать LiveData
     implementation(libs.androidx.activity) // Для ActivityResultLauncher и т.п., если нужно
 
     // --- Room ---
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx) // Kotlin Extensions для Room
     implementation(libs.androidx.room.paging)
-    kapt(libs.androidx.room.compiler) // Используем kapt для Room Compiler
+    ksp(libs.androidx.room.compiler)
 
     // --- DataStore (для настроек) ---
     implementation(libs.androidx.datastore.preferences)
@@ -180,17 +140,19 @@ dependencies {
     implementation(libs.kotlinx.coroutines.android)
 
     // --- Testing ---
-    implementation(libs.androidx.espresso.contrib)
-    implementation(libs.androidx.fragment.testing)
-    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
+    testImplementation(libs.androidx.junit)
     testImplementation(libs.androidx.arch.core.testing)
     testImplementation("com.google.dagger:hilt-android-testing:2.55")
-    kaptTest(libs.hilt.compiler)
+    kspTest(libs.hilt.compiler)
+    kspAndroidTest(libs.hilt.compiler)
+    debugImplementation(libs.androidx.fragment.testing)
+    androidTestImplementation(libs.androidx.espresso.contrib)
+    testImplementation(libs.androidx.espresso.core)
+    androidTestImplementation(libs.androidx.junit.ktx)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation("com.google.dagger:hilt-android-testing:2.55")
-    kaptAndroidTest(libs.hilt.compiler)
     testImplementation("org.mockito:mockito-core:5.14.2") // Добавляем Mockito Core
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.4.0") // Добавляем Mockito Kotlin для удобства работы с Kotlin
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0") // Для тестирования Coroutines

@@ -6,7 +6,7 @@ import androidx.test.espresso.action.ViewActions.scrollTo
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.robolectric.RobolectricTestRunner
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.di.RepositoryModule
 import com.ilyadev.meowmoments.di.UseCaseModule
@@ -31,7 +31,7 @@ import org.robolectric.annotation.Config
 
 @HiltAndroidTest
 @UninstallModules(RepositoryModule::class, UseCaseModule::class)
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 @Config(application = HiltTestApplication::class, qualifiers = "w480dp-h800dp")
 class MainFragmentTest {
 

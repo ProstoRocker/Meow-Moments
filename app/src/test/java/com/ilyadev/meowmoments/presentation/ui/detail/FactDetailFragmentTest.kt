@@ -1,5 +1,6 @@
 package com.ilyadev.meowmoments.presentation.ui.detail
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import android.os.Bundle
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
@@ -8,7 +9,7 @@ import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
-import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.robolectric.RobolectricTestRunner
 import com.ilyadev.meowmoments.R
 import com.ilyadev.meowmoments.di.RepositoryModule
 import com.ilyadev.meowmoments.domain.model.CatFact
@@ -27,9 +28,10 @@ import org.junit.runner.RunWith
 import org.mockito.Mockito.mock
 import org.robolectric.annotation.Config
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltAndroidTest
 @UninstallModules(RepositoryModule::class)
-@RunWith(AndroidJUnit4::class)
+@RunWith(RobolectricTestRunner::class)
 @Config(application = HiltTestApplication::class, qualifiers = "w480dp-h800dp")
 class FactDetailFragmentTest {
 

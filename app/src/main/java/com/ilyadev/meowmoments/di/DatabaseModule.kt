@@ -22,7 +22,8 @@ object DatabaseModule {
             AppDatabase::class.java,
             "meow_moments_db"
         )
-            .fallbackToDestructiveMigration() // ВНИМАНИЕ: Это удалит данные при изменении схемы! Для продакшена используй Migration.
+            .fallbackToDestructiveMigration(dropAllTables = true) // ВНИМАНИЕ: при несовместимой миграции база будет пересоздана с удалением всех таблиц.
+                                                                    // Для продакшена лучше использовать явные Migration.
             .build()
     }
 

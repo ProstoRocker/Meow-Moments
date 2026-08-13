@@ -14,9 +14,11 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mock
 import org.mockito.MockitoAnnotations
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 
 // Тесты для ViewModel
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class FactDetailViewModelTest {
 
     @get:Rule
