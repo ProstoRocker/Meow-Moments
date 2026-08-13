@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 
 @Singleton
 class NotificationScheduler @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val settingsRepository: SettingsRepository
 ) {
 

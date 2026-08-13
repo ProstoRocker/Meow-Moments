@@ -86,15 +86,15 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:3.3.2")
 
     // Hilt для WorkManager
-    implementation("androidx.hilt:hilt-work:1.2.0")
-    ksp("androidx.hilt:hilt-compiler:1.2.0")
+    implementation("androidx.hilt:hilt-work:1.3.0")
+    ksp("androidx.hilt:hilt-compiler:1.3.0")
 
     // -- Firebase Cloud Messaging
     implementation(platform("com.google.firebase:firebase-bom:34.16.0"))
     implementation("com.google.firebase:firebase-messaging")
 
     // -- WorkManager для планирования задач
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
+    implementation("androidx.work:work-runtime-ktx:2.11.2")
 
     // --- Core ---
     implementation(libs.androidx.core.ktx)
