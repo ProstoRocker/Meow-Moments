@@ -41,6 +41,8 @@ class MainFragment : Fragment() {
         // --- НОВОЕ: Настройка SwipeRefreshLayout ---
         setupSwipeRefresh()
 
+        observeCollectedCount()
+
         // --- ДОБАВЛЕНЫ ПЕРЕХОДЫ ---
         binding.btnNextFact.setOnClickListener {
             viewModel.refreshFact()
@@ -176,7 +178,9 @@ class MainFragment : Fragment() {
             }
         }
 
-        // Получаем количество собранных фактов
+    }
+
+    private fun observeCollectedCount() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.getCollectedCount().collect { count ->
