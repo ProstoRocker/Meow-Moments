@@ -103,11 +103,15 @@ class MainFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
-                        MainUiState.Loading -> {
-                            binding.progressBar.visibility = View.VISIBLE
-                            binding.contentScrollview.visibility = View.GONE
-                            // --- НОВОЕ: Останавливаем анимацию refresh при загрузке ---
-                            binding.swipeRefresh.isRefreshing = false
+                        is MainUiState.Loading -> {
+                            binding.progressBar.visibility =
+                                if (state.isRefreshing) View.GONE else View.VISIBLE
+
+                            binding.contentScrollview.visibility =
+                                if (state.isRefreshing) View.VISIBLE else View.GONE
+
+                            binding.swipeRefresh.isRefreshing =
+                                state.isRefreshing
                         }
 
                         is MainUiState.Success -> {
@@ -133,17 +137,14 @@ class MainFragment : Fragment() {
     // --- НОВОЕ: Настройка обработки свайпа вниз ---
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
-            Log.d("MainFragment", "Swipe refresh triggered, refreshing fact")
-            viewModel.refreshFact()
-        }
+            Log.d(
+                "MainFragment",
+                "Swipe refresh triggered, refreshing fact"
+            )
 
-        // Убедимся, что анимация не включена, если данные не загружаются
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    binding.swipeRefresh.isRefreshing = state is MainUiState.Loading
-                }
-            }
+            viewModel.refreshFact(
+                isSwipeRefresh = true
+            )
         }
     }
 

@@ -16,9 +16,18 @@ import javax.inject.Inject
 
 // Состояние UI для MainFragment
 sealed interface MainUiState {
-    object Loading : MainUiState
-    data class Success(val fact: CatFact) : MainUiState
-    data class Error(val message: String) : MainUiState
+
+    data class Loading(
+        val isRefreshing: Boolean = false
+    ) : MainUiState
+
+    data class Success(
+        val fact: CatFact
+    ) : MainUiState
+
+    data class Error(
+        val message: String
+    ) : MainUiState
 }
 
 @HiltViewModel
@@ -27,8 +36,10 @@ class MainViewModel @Inject constructor(
     private val repository: CatFactsRepository // Используется для получения количества и случайного факта
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<MainUiState>(MainUiState.Loading)
-    val uiState: StateFlow<MainUiState> = _uiState.asStateFlow()
+    private val _uiState =
+        MutableStateFlow<MainUiState>(MainUiState.Loading())
+    val uiState: StateFlow<MainUiState> =
+        _uiState.asStateFlow()
 
     init {
         loadTodayFact()
@@ -36,32 +47,44 @@ class MainViewModel @Inject constructor(
 
     private fun loadTodayFact() {
         viewModelScope.launch {
-            _uiState.value = MainUiState.Loading
+            _uiState.value = MainUiState.Loading()
             try {
                 val fact = getTodayFactUseCase()
+
                 _uiState.value = if (fact != null) {
                     MainUiState.Success(fact)
                 } else {
-                    MainUiState.Error("Факты закончились или произошла ошибка.")
+                    MainUiState.Error(
+                        "Факты закончились или произошла ошибка."
+                    )
                 }
             } catch (e: Exception) {
-                _uiState.value = MainUiState.Error(e.message ?: "Неизвестная ошибка")
+                _uiState.value = MainUiState.Error(
+                    e.message ?: "Неизвестная ошибка"
+                )
             }
         }
     }
 
     // Функция для обновления факта (например, по кнопке "ещё один")
     // Теперь вызывает метод из репозитория для получения случайного факта
-    fun refreshFact() {
+    fun refreshFact(
+        isSwipeRefresh: Boolean = false
+    ) {
         viewModelScope.launch {
-            _uiState.value = MainUiState.Loading
+            _uiState.value = MainUiState.Loading(
+                isRefreshing = isSwipeRefresh
+            )
             try {
                 // ВАЖНО: вызываем метод репозитория напрямую для получения случайного факта
                 val randomFact = repository.getRandomFact()
+
                 _uiState.value = if (randomFact != null) {
                     MainUiState.Success(randomFact)
                 } else {
-                    MainUiState.Error("Нет доступных фактов для отображения.")
+                    MainUiState.Error(
+                        "Нет доступных фактов для отображения."
+                    )
                 }
             } catch (e: Exception) {
                 _uiState.value = MainUiState.Error(
@@ -72,7 +95,9 @@ class MainViewModel @Inject constructor(
     }
 
     // Новая функция для инициализации базы данных
-    fun initializeDatabase(databaseInitializer: DatabaseInitializer) {
+    fun initializeDatabase(
+        databaseInitializer: DatabaseInitializer
+    ) {
         viewModelScope.launch {
             databaseInitializer.initializeDatabase()
             loadTodayFact() // После инициализации загружаем факт
