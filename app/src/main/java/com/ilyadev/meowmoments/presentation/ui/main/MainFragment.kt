@@ -60,35 +60,17 @@ class MainFragment : Fragment() {
 
         // Клик по изображению -> переход в FactDetailFragment
         binding.ivFactImage.setOnClickListener {
-            val state = viewModel.uiState.value
-            if (state is MainUiState.Success) {
-                val action = MainFragmentDirections.actionMainFragmentToFactDetailFragment(
-                    fact = state.fact
-                )
-                findNavController().navigate(action)
-            }
+            navigateToFactDetail()
         }
 
         // Клик по тексту факта -> переход в FactDetailFragment
         binding.tvFactText.setOnClickListener {
-            val state = viewModel.uiState.value
-            if (state is MainUiState.Success) {
-                val action = MainFragmentDirections.actionMainFragmentToFactDetailFragment(
-                    fact = state.fact
-                )
-                findNavController().navigate(action)
-            }
+            navigateToFactDetail()
         }
 
         // Клик по категории -> переход в FactDetailFragment
         binding.tvFactCategory.setOnClickListener {
-            val state = viewModel.uiState.value
-            if (state is MainUiState.Success) {
-                val action = MainFragmentDirections.actionMainFragmentToFactDetailFragment(
-                    fact = state.fact
-                )
-                findNavController().navigate(action)
-            }
+            navigateToFactDetail()
         }
 
         // Клик по дате -> переход в CalendarFragment
@@ -145,6 +127,20 @@ class MainFragment : Fragment() {
             viewModel.refreshFact(
                 isSwipeRefresh = true
             )
+        }
+    }
+
+    // Переход к деталям доступен только после успешной загрузки факта
+    private fun navigateToFactDetail() {
+        val state = viewModel.uiState.value
+
+        if (state is MainUiState.Success) {
+            val action =
+                MainFragmentDirections
+                    .actionMainFragmentToFactDetailFragment(
+                        fact = state.fact
+                    )
+            findNavController().navigate(action)
         }
     }
 
