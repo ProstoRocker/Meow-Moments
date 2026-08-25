@@ -35,50 +35,15 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+    override fun onViewCreated(
+        view: View,
+        savedInstanceState: Bundle?
+    ) {
         super.onViewCreated(view, savedInstanceState)
 
-        // --- НОВОЕ: Настройка SwipeRefreshLayout ---
         setupSwipeRefresh()
-
         observeCollectedCount()
-
-        // --- ДОБАВЛЕНЫ ПЕРЕХОДЫ ---
-        binding.btnNextFact.setOnClickListener {
-            viewModel.refreshFact()
-        }
-
-        // Клик по счётчику коллекции -> переход в MyFactsFragment
-        binding.tvCollectionProgress.setOnClickListener {
-            Log.d(
-                "MainFragment",
-                "Clicked on collection progress, navigating to MyFactsFragment"
-            )
-            val action = MainFragmentDirections.actionMainFragmentToMyFactsFragment()
-            findNavController().navigate(action)
-        }
-
-        // Клик по изображению -> переход в FactDetailFragment
-        binding.ivFactImage.setOnClickListener {
-            navigateToFactDetail()
-        }
-
-        // Клик по тексту факта -> переход в FactDetailFragment
-        binding.tvFactText.setOnClickListener {
-            navigateToFactDetail()
-        }
-
-        // Клик по категории -> переход в FactDetailFragment
-        binding.tvFactCategory.setOnClickListener {
-            navigateToFactDetail()
-        }
-
-        // Клик по дате -> переход в CalendarFragment
-        binding.tvFactDate.setOnClickListener {
-            Log.d("MainFragment", "Clicked on fact date, navigating to CalendarFragment")
-            val action = MainFragmentDirections.actionMainFragmentToCalendarFragment()
-            findNavController().navigate(action)
-        }
+        setupClickListeners()
 
         // Наблюдение за состоянием UI с использованием repeatOnLifecycle
         viewLifecycleOwner.lifecycleScope.launch {
@@ -116,7 +81,51 @@ class MainFragment : Fragment() {
         }
     }
 
-    // --- НОВОЕ: Настройка обработки свайпа вниз ---
+    private fun setupClickListeners() {
+        binding.btnNextFact.setOnClickListener {
+            viewModel.refreshFact()
+        }
+
+        binding.tvCollectionProgress.setOnClickListener {
+            Log.d(
+                "MainFragment",
+                "Clicked on collection progress, navigating to MyFactsFragment"
+            )
+
+            val action =
+                MainFragmentDirections
+                    .actionMainFragmentToMyFactsFragment()
+
+            findNavController().navigate(action)
+        }
+
+        binding.ivFactImage.setOnClickListener {
+            navigateToFactDetail()
+        }
+
+        binding.tvFactText.setOnClickListener {
+            navigateToFactDetail()
+        }
+
+        binding.tvFactCategory.setOnClickListener {
+            navigateToFactDetail()
+        }
+
+        binding.tvFactDate.setOnClickListener {
+            Log.d(
+                "MainFragment",
+                "Clicked on fact date, navigating to CalendarFragment"
+            )
+
+            val action =
+                MainFragmentDirections
+                    .actionMainFragmentToCalendarFragment()
+
+            findNavController().navigate(action)
+        }
+    }
+
+    // Настройка обновления свайпом
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
             Log.d(
