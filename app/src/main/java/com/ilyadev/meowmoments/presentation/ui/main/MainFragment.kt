@@ -125,32 +125,47 @@ class MainFragment : Fragment() {
         binding.tvFactCategory.text = "#${fact.category}"
         binding.tvFactText.text = fact.text
 
-        // 🔥 КРИТИЧЕСКАЯ ПРОВЕРКА: Убедимся, что imageUrl не null и не пустой
+        bindFactImage(fact)
+    }
+
+    private fun bindFactImage(fact: CatFact) {
         val imageUrl = fact.imageUrl
-        Log.d("MainFragment", "Binding fact with imageUrl: '$imageUrl'")
+
+        Log.d(
+            "MainFragment",
+            "Binding fact with imageUrl: '$imageUrl'"
+        )
 
         if (imageUrl.isNullOrEmpty()) {
-            // Если URL пустой или null, показываем placeholder и логируем
-            binding.ivFactImage.setImageResource(R.drawable.placeholder_cat)
-            Log.w("MainFragment", "Warning: imageUrl is null or empty! Fact text: '${fact.text}'")
+            binding.ivFactImage.setImageResource(
+                R.drawable.placeholder_cat
+            )
+
+            Log.w(
+                "MainFragment",
+                "Warning: imageUrl is null or empty! Fact text: '${fact.text}'"
+            )
         } else {
-            // Загружаем изображение через Coil
             binding.ivFactImage.load(imageUrl) {
                 crossfade(true)
                 placeholder(R.drawable.placeholder_cat)
                 error(R.drawable.error_cat)
-                // Добавляем логирование загрузки
                 listener(
                     onSuccess = { _, _ ->
-                        Log.d("MainFragment", "Image loaded successfully from: $imageUrl")
+                        Log.d(
+                            "MainFragment",
+                            "Image loaded successfully from: $imageUrl"
+                        )
                     },
                     onError = { _, _ ->
-                        Log.e("MainFragment", "Image loading failed for URL: $imageUrl")
+                        Log.e(
+                            "MainFragment",
+                            "Image loading failed for URL: $imageUrl"
+                        )
                     }
                 )
             }
         }
-
     }
 
     private fun observeCollectedCount() {
