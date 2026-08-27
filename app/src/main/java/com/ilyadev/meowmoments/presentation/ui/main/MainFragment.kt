@@ -23,6 +23,10 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
+    private companion object {
+        const val TAG = "MainFragment"
+    }
+
     private val viewModel: MainViewModel by viewModels()
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -55,7 +59,7 @@ class MainFragment : Fragment() {
 
         binding.tvCollectionProgress.setOnClickListener {
             Log.d(
-                "MainFragment",
+                TAG,
                 "Clicked on collection progress, navigating to MyFactsFragment"
             )
 
@@ -80,7 +84,7 @@ class MainFragment : Fragment() {
 
         binding.tvFactDate.setOnClickListener {
             Log.d(
-                "MainFragment",
+                TAG,
                 "Clicked on fact date, navigating to CalendarFragment"
             )
 
@@ -96,7 +100,7 @@ class MainFragment : Fragment() {
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
             Log.d(
-                "MainFragment",
+                TAG,
                 "Swipe refresh triggered, refreshing fact"
             )
 
@@ -125,32 +129,47 @@ class MainFragment : Fragment() {
         binding.tvFactCategory.text = "#${fact.category}"
         binding.tvFactText.text = fact.text
 
-        // 🔥 КРИТИЧЕСКАЯ ПРОВЕРКА: Убедимся, что imageUrl не null и не пустой
+        bindFactImage(fact)
+    }
+
+    private fun bindFactImage(fact: CatFact) {
         val imageUrl = fact.imageUrl
-        Log.d("MainFragment", "Binding fact with imageUrl: '$imageUrl'")
+
+        Log.d(
+            TAG,
+            "Binding fact with imageUrl: '$imageUrl'"
+        )
 
         if (imageUrl.isNullOrEmpty()) {
-            // Если URL пустой или null, показываем placeholder и логируем
-            binding.ivFactImage.setImageResource(R.drawable.placeholder_cat)
-            Log.w("MainFragment", "Warning: imageUrl is null or empty! Fact text: '${fact.text}'")
+            binding.ivFactImage.setImageResource(
+                R.drawable.placeholder_cat
+            )
+
+            Log.w(
+                TAG,
+                "Warning: imageUrl is null or empty! Fact text: '${fact.text}'"
+            )
         } else {
-            // Загружаем изображение через Coil
             binding.ivFactImage.load(imageUrl) {
                 crossfade(true)
                 placeholder(R.drawable.placeholder_cat)
                 error(R.drawable.error_cat)
-                // Добавляем логирование загрузки
                 listener(
                     onSuccess = { _, _ ->
-                        Log.d("MainFragment", "Image loaded successfully from: $imageUrl")
+                        Log.d(
+                            TAG,
+                            "Image loaded successfully from: $imageUrl"
+                        )
                     },
                     onError = { _, _ ->
-                        Log.e("MainFragment", "Image loading failed for URL: $imageUrl")
+                        Log.e(
+                            TAG,
+                            "Image loading failed for URL: $imageUrl"
+                        )
                     }
                 )
             }
         }
-
     }
 
     private fun observeCollectedCount() {
