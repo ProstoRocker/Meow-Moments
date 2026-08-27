@@ -44,41 +44,7 @@ class MainFragment : Fragment() {
         setupSwipeRefresh()
         observeCollectedCount()
         setupClickListeners()
-
-        // Наблюдение за состоянием UI с использованием repeatOnLifecycle
-        viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.uiState.collect { state ->
-                    when (state) {
-                        is MainUiState.Loading -> {
-                            binding.progressBar.visibility =
-                                if (state.isRefreshing) View.GONE else View.VISIBLE
-
-                            binding.contentScrollview.visibility =
-                                if (state.isRefreshing) View.VISIBLE else View.GONE
-
-                            binding.swipeRefresh.isRefreshing =
-                                state.isRefreshing
-                        }
-
-                        is MainUiState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.contentScrollview.visibility = View.VISIBLE
-                            bindFact(state.fact)
-                            // --- НОВОЕ: Останавливаем анимацию refresh при успехе ---
-                            binding.swipeRefresh.isRefreshing = false
-                        }
-
-                        is MainUiState.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.contentScrollview.visibility = View.GONE
-                            binding.swipeRefresh.isRefreshing = false // --- НОВОЕ ---
-                            Toast.makeText(context, state.message, Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-        }
+        observeUiState()
     }
 
     private fun setupClickListeners() {
@@ -192,6 +158,53 @@ class MainFragment : Fragment() {
                 viewModel.getCollectedCount().collect { count ->
                     binding.tvCollectionProgress.text =
                         "Факт $count из ${viewModel.getTotalFactsCount()}"
+                }
+            }
+        }
+    }
+
+    private fun observeUiState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.uiState.collect { state ->
+                    when (state) {
+                        is MainUiState.Loading -> {
+                            binding.progressBar.visibility =
+                                if (state.isRefreshing) {
+                                    View.GONE
+                                } else {
+                                    View.VISIBLE
+                                }
+
+                            binding.contentScrollview.visibility =
+                                if (state.isRefreshing) {
+                                    View.VISIBLE
+                                } else {
+                                    View.GONE
+                                }
+
+                            binding.swipeRefresh.isRefreshing =
+                                state.isRefreshing
+                        }
+
+                        is MainUiState.Success -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.contentScrollview.visibility = View.VISIBLE
+                            bindFact(state.fact)
+                            binding.swipeRefresh.isRefreshing = false
+                        }
+
+                        is MainUiState.Error -> {
+                            binding.progressBar.visibility = View.GONE
+                            binding.contentScrollview.visibility = View.GONE
+                            binding.swipeRefresh.isRefreshing = false
+                            Toast.makeText(
+                                context,
+                                state.message,
+                                Toast.LENGTH_LONG
+                            ).show()
+                        }
+                    }
                 }
             }
         }
