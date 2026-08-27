@@ -23,6 +23,10 @@ import kotlinx.coroutines.launch
 @AndroidEntryPoint
 class MainFragment : Fragment() {
 
+    private companion object {
+        const val TAG = "MainFragment"
+    }
+
     private val viewModel: MainViewModel by viewModels()
     private var _binding: FragmentMainBinding? = null
     private val binding get() = _binding!!
@@ -55,7 +59,7 @@ class MainFragment : Fragment() {
 
         binding.tvCollectionProgress.setOnClickListener {
             Log.d(
-                "MainFragment",
+                TAG,
                 "Clicked on collection progress, navigating to MyFactsFragment"
             )
 
@@ -80,7 +84,7 @@ class MainFragment : Fragment() {
 
         binding.tvFactDate.setOnClickListener {
             Log.d(
-                "MainFragment",
+                TAG,
                 "Clicked on fact date, navigating to CalendarFragment"
             )
 
@@ -96,7 +100,7 @@ class MainFragment : Fragment() {
     private fun setupSwipeRefresh() {
         binding.swipeRefresh.setOnRefreshListener {
             Log.d(
-                "MainFragment",
+                TAG,
                 "Swipe refresh triggered, refreshing fact"
             )
 
@@ -132,7 +136,7 @@ class MainFragment : Fragment() {
         val imageUrl = fact.imageUrl
 
         Log.d(
-            "MainFragment",
+            TAG,
             "Binding fact with imageUrl: '$imageUrl'"
         )
 
@@ -142,7 +146,7 @@ class MainFragment : Fragment() {
             )
 
             Log.w(
-                "MainFragment",
+                TAG,
                 "Warning: imageUrl is null or empty! Fact text: '${fact.text}'"
             )
         } else {
@@ -153,13 +157,13 @@ class MainFragment : Fragment() {
                 listener(
                     onSuccess = { _, _ ->
                         Log.d(
-                            "MainFragment",
+                            TAG,
                             "Image loaded successfully from: $imageUrl"
                         )
                     },
                     onError = { _, _ ->
                         Log.e(
-                            "MainFragment",
+                            TAG,
                             "Image loading failed for URL: $imageUrl"
                         )
                     }
