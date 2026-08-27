@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -178,33 +179,21 @@ class MainFragment : Fragment() {
     }
 
     private fun renderLoading(state: MainUiState.Loading) {
-        binding.progressBar.visibility =
-            if (state.isRefreshing) {
-                View.GONE
-            } else {
-                View.VISIBLE
-            }
-
-        binding.contentScrollview.visibility =
-            if (state.isRefreshing) {
-                View.VISIBLE
-            } else {
-                View.GONE
-            }
-
+        binding.progressBar.isVisible = !state.isRefreshing
+        binding.contentScrollview.isVisible = state.isRefreshing
         binding.swipeRefresh.isRefreshing = state.isRefreshing
     }
 
     private fun renderSuccess(state: MainUiState.Success) {
-        binding.progressBar.visibility = View.GONE
-        binding.contentScrollview.visibility = View.VISIBLE
+        binding.progressBar.isVisible = false
+        binding.contentScrollview.isVisible = true
         bindFact(state.fact)
         binding.swipeRefresh.isRefreshing = false
     }
 
     private fun renderError(state: MainUiState.Error) {
-        binding.progressBar.visibility = View.GONE
-        binding.contentScrollview.visibility = View.GONE
+        binding.progressBar.isVisible = false
+        binding.contentScrollview.isVisible = false
         binding.swipeRefresh.isRefreshing = false
 
         Toast.makeText(
