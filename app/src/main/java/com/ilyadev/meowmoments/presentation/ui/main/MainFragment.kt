@@ -168,46 +168,50 @@ class MainFragment : Fragment() {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.uiState.collect { state ->
                     when (state) {
-                        is MainUiState.Loading -> {
-                            binding.progressBar.visibility =
-                                if (state.isRefreshing) {
-                                    View.GONE
-                                } else {
-                                    View.VISIBLE
-                                }
-
-                            binding.contentScrollview.visibility =
-                                if (state.isRefreshing) {
-                                    View.VISIBLE
-                                } else {
-                                    View.GONE
-                                }
-
-                            binding.swipeRefresh.isRefreshing =
-                                state.isRefreshing
-                        }
-
-                        is MainUiState.Success -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.contentScrollview.visibility = View.VISIBLE
-                            bindFact(state.fact)
-                            binding.swipeRefresh.isRefreshing = false
-                        }
-
-                        is MainUiState.Error -> {
-                            binding.progressBar.visibility = View.GONE
-                            binding.contentScrollview.visibility = View.GONE
-                            binding.swipeRefresh.isRefreshing = false
-                            Toast.makeText(
-                                context,
-                                state.message,
-                                Toast.LENGTH_LONG
-                            ).show()
-                        }
+                        is MainUiState.Loading -> renderLoading(state)
+                        is MainUiState.Success -> renderSuccess(state)
+                        is MainUiState.Error -> renderError(state)
                     }
                 }
             }
         }
+    }
+
+    private fun renderLoading(state: MainUiState.Loading) {
+        binding.progressBar.visibility =
+            if (state.isRefreshing) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+
+        binding.contentScrollview.visibility =
+            if (state.isRefreshing) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+        binding.swipeRefresh.isRefreshing = state.isRefreshing
+    }
+
+    private fun renderSuccess(state: MainUiState.Success) {
+        binding.progressBar.visibility = View.GONE
+        binding.contentScrollview.visibility = View.VISIBLE
+        bindFact(state.fact)
+        binding.swipeRefresh.isRefreshing = false
+    }
+
+    private fun renderError(state: MainUiState.Error) {
+        binding.progressBar.visibility = View.GONE
+        binding.contentScrollview.visibility = View.GONE
+        binding.swipeRefresh.isRefreshing = false
+
+        Toast.makeText(
+            context,
+            state.message,
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     override fun onDestroyView() {
